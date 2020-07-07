@@ -37,6 +37,8 @@ public class Core : MonoBehaviour
 
     void OnDrawGizmos()
     {
-        Gizmos.DrawWireCube(windowCenter.position, new Vector3(WindowConfiguration.Instance.Width, WindowConfiguration.Instance.Height, 0.01f));
+        // Visualize window borders in Unity editor
+        var window = WindowConfiguration.Instance;
+        Gizmos.DrawWireCube(windowCenter.position, new Vector3(window.Width, window.Height, 0.01f));
     }
 }

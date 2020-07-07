@@ -11,7 +11,12 @@ namespace ImageProcessing
     public class FaceDetection : IPlayerManager
     {
         #region Private fields
-        [SerializeField] private RawImage imageBox;
+        [SerializeField] private RawImage imageBox = null;
+
+        [SerializeField, Tooltip("Should face recognition use webcamera or prerecorded video footage?")]
+        private bool useCamera = true;
+        [SerializeField, Tooltip("If video footage is used for face recognition, specify its access path.")]
+        private string videoPath = "";
 
         private static readonly string CASCADE_PATH = @"Assets/Plugins/EmguCV/haarcascade_frontalface_default.xml";
 
@@ -22,13 +27,13 @@ namespace ImageProcessing
         private const float z_dist = 5.0f; //Placeholder until we get actual depth data
         private PointF faceRectCenter = new PointF(0, 0);
         private Vector3 facePos => RemapToCameraCoords(faceRectCenter);
-        private PlayerData playerData = new PlayerData();
+        private PlayerData playerData = new PlayerData { EyePosition = Vector3.zero };
         #endregion
 
         // OnEnable is called just after the object is enabled
         void OnEnable()
         {
-            capture = new VideoCapture();
+            capture = useCamera ? new VideoCapture() : new VideoCapture(videoPath);
             cc = new CascadeClassifier(CASCADE_PATH);
         }
 
@@ -52,13 +57,18 @@ namespace ImageProcessing
                 Texture2D texture = new Texture2D(img.Width, img.Height);
                 texture.LoadImage(img.ToJpegData());
 
-                imageBox.texture = texture;
+                if (imageBox != null && imageBox.isActiveAndEnabled)
+                {
+                    imageBox.texture = texture;
+                }
             }
+
+            playerData.EyePosition = facePos;
         }
 
         public override PlayerData GetPlayerData()
         {
-            return new PlayerData { EyePosition = facePos };
+            return playerData;
         }
 
         private static PointF GetRectCenter(Rectangle rect)
