@@ -32,7 +32,7 @@ public class Core : MonoBehaviour
         Debug.DrawRay(playerData.EyePosition, vleft * 1000, Color.green);
         Debug.DrawRay(playerData.EyePosition, vright * 1000, Color.blue);
         
-        renderCamera.fieldOfView = Vector3.Angle(vleft, vright); //Mathf.Acos(Vector3.Dot(vleft, vright)) / Mathf.PI * 180f;
+        renderCamera.fieldOfView = Vector3.Angle(vleft, vright);
     }
 
     void OnDrawGizmos()
