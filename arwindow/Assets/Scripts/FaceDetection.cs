@@ -5,6 +5,7 @@ using Emgu.CV.Structure;
 using System.Drawing;
 using PlayerManagement;
 using WindowConfigurationManagement;
+using System.Threading;
 
 namespace ImageProcessing
 {
@@ -48,10 +49,7 @@ namespace ImageProcessing
                 foreach (Rectangle face in faces)
                 {
                     faceRectCenter = GetRectCenter(face);
-                    img.Draw(face, new Bgr(System.Drawing.Color.Red), 4);
-                    img.Draw(new Rectangle((int)faceRectCenter.X, (int)faceRectCenter.Y, 1, 1),
-                             new Bgr(System.Drawing.Color.Magenta),
-                             20);
+                    DrawFaceMarkers(img, face);
                 }
 
                 Texture2D texture = new Texture2D(img.Width, img.Height);
@@ -63,12 +61,29 @@ namespace ImageProcessing
                 }
             }
 
+            if (!useCamera)
+            {
+                Thread.Sleep((int)(1000 / capture.GetCaptureProperty(Emgu.CV.CvEnum.CapProp.Fps)));
+                if (capture.GetCaptureProperty(Emgu.CV.CvEnum.CapProp.PosFrames) >= capture.GetCaptureProperty(Emgu.CV.CvEnum.CapProp.FrameCount))
+                {
+                    capture.SetCaptureProperty(Emgu.CV.CvEnum.CapProp.PosFrames, 0);
+                }
+            }
+
             playerData.EyePosition = facePos;
         }
 
         public override PlayerData GetPlayerData()
         {
             return playerData;
+        }
+
+        private void DrawFaceMarkers(Image<Bgr, byte> img, Rectangle face)
+        {
+            img.Draw(face, new Bgr(System.Drawing.Color.Red), 4);
+            img.Draw(new Rectangle((int)faceRectCenter.X, (int)faceRectCenter.Y, 1, 1),
+                     new Bgr(System.Drawing.Color.Magenta),
+                     20);
         }
 
         private static PointF GetRectCenter(Rectangle rect)
