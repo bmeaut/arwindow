@@ -27,7 +27,7 @@ namespace ImageProcessing
         private Size imageSize;
         private const float z_dist = 5.0f; //Placeholder until we get actual depth data
         private PointF faceRectCenter = new PointF(0, 0);
-        private Vector3 facePos => RemapToCameraCoords(faceRectCenter);
+        private Vector3 FacePos => RemapToCameraCoords(faceRectCenter);
         private PlayerData playerData = new PlayerData { EyePosition = Vector3.zero };
         #endregion
 
@@ -70,7 +70,7 @@ namespace ImageProcessing
                 }
             }
 
-            playerData.EyePosition = facePos;
+            playerData.EyePosition = FacePos;
         }
 
         public override PlayerData GetPlayerData()
@@ -83,7 +83,7 @@ namespace ImageProcessing
             img.Draw(face, new Bgr(System.Drawing.Color.Red), 4);
             img.Draw(new Rectangle((int)faceRectCenter.X, (int)faceRectCenter.Y, 1, 1),
                      new Bgr(System.Drawing.Color.Magenta),
-                     20);
+                     5);
         }
 
         private static PointF GetRectCenter(Rectangle rect)
@@ -96,7 +96,7 @@ namespace ImageProcessing
         {
             var cameraCoords = new Vector3(0, 0, z_dist);
             cameraCoords.x = WindowConfiguration.Instance.Width * ((point.X / imageSize.Width) - 0.5f);
-            cameraCoords.y = WindowConfiguration.Instance.Height * ((point.Y / imageSize.Height) - 0.5f);
+            cameraCoords.y = -1.0f * WindowConfiguration.Instance.Height * ((point.Y / imageSize.Height) - 0.5f);
 
             return cameraCoords;
         }
