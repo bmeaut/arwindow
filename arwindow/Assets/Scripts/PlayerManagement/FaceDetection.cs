@@ -4,7 +4,7 @@ using Emgu.CV;
 using Emgu.CV.Structure;
 using System.Drawing;
 using PlayerManagement;
-using WindowConfigurationManagement;
+using Configuration.WindowConfigurationManagement;
 using System.Threading;
 
 namespace ImageProcessing

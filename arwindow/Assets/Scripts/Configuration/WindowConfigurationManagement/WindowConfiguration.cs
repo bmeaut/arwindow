@@ -1,19 +1,27 @@
-﻿using System;
+﻿using Serialization;
+using System;
 using UnityEngine;
+using Newtonsoft.Json;
 
-namespace WindowConfigurationManagement
+namespace Configuration.WindowConfigurationManagement
 {
     public class WindowConfiguration
     {
         private static readonly Lazy<WindowConfiguration> lazy = new Lazy<WindowConfiguration>(() => new WindowConfiguration());
         public static WindowConfiguration Instance => lazy.Value;
 
-        public float Width { get; }
-        public float Height { get; }
+        private const string windowConfigFile = "Assets/Config/WindowConfiguration.json";
 
-        private float playerCameraAngleInDegree, playerCameraYPos, playerCameraXPos;
+        public float Width { get; private set; } = 20;
+        public float Height { get; private set; } = 15;
+
+        [JsonProperty] private float playerCameraAngleInDegree = 90;
+        [JsonProperty] private float playerCameraXPos = 0;
+        [JsonProperty] private float playerCameraYPos = 5;
         private float targetCameraAngleInDegree, targetCameraYPos, targetCameraXPos;
-        
+
+        private WindowConfiguration() { }
+
 
         public Vector3 PlayerCameraPointToWindowCenteredPoint(Vector3 point)
         {
@@ -49,13 +57,15 @@ namespace WindowConfigurationManagement
             };
         }
 
-        private WindowConfiguration()
+        public void UpdateConfiguration()
         {
-            playerCameraAngleInDegree = 90;
-            playerCameraXPos = 0;
-            playerCameraYPos = 5;
-            Width = 20;
-            Height = 15;
+            var config = ConfigSerializer.ReadJsonFile(windowConfigFile);
+
+            playerCameraAngleInDegree = config.Value<float>("playerCameraAngleInDegree");
+            playerCameraXPos = config.Value<float>("playerCameraXPos");
+            playerCameraYPos = config.Value<float>("playerCameraYPos");
+            Width = config.Value<float>("Width");
+            Height = config.Value<float>("Height");
         }
     }
 }

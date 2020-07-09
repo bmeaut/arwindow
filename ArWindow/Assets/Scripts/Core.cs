@@ -1,6 +1,6 @@
 ﻿using PlayerManagement;
 using UnityEngine;
-using WindowConfigurationManagement;
+using Configuration.WindowConfigurationManagement;
 
 public class Core : MonoBehaviour
 {
