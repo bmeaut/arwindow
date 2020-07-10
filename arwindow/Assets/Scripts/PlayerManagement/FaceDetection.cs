@@ -5,7 +5,6 @@ using Emgu.CV.Structure;
 using System.Drawing;
 using PlayerManagement;
 using Configuration.WindowConfigurationManagement;
-using System.Threading;
 using Serialization;
 
 namespace ImageProcessing
@@ -24,6 +23,8 @@ namespace ImageProcessing
 
         private VideoCapture capture;
         private CascadeClassifier cc;
+        private int videoFrameCount; //Number of frames in video file
+        private int videoCaptureFps;
 
         private Size imageSize;
         private const float z_dist = 5.0f; //Placeholder until we get actual depth data
@@ -42,6 +43,9 @@ namespace ImageProcessing
             else if (videoPath != "")
             {
                 capture = new VideoCapture(videoPath);
+                videoFrameCount = (int)capture.GetCaptureProperty(Emgu.CV.CvEnum.CapProp.FrameCount);
+                videoCaptureFps = (int)capture.GetCaptureProperty(Emgu.CV.CvEnum.CapProp.Fps);
+
             }
             else return;
 
@@ -53,6 +57,13 @@ namespace ImageProcessing
         {
             if (capture == null || cc == null) return;
 
+            
+            if (!useCamera)
+            {//seek to correct video frame
+                var vframe = (Time.time * videoCaptureFps) % videoFrameCount;
+                capture.SetCaptureProperty(Emgu.CV.CvEnum.CapProp.PosFrames, vframe);
+            }
+            
             using (Image<Bgr, byte> img = capture.QueryFrame().ToImage<Bgr, byte>())
             {
                 imageSize = img.Size;
@@ -70,15 +81,6 @@ namespace ImageProcessing
                 if (imageBox != null && imageBox.isActiveAndEnabled)
                 {
                     imageBox.texture = texture;
-                }
-            }
-
-            if (!useCamera)
-            {
-                Thread.Sleep((int)(1000 / capture.GetCaptureProperty(Emgu.CV.CvEnum.CapProp.Fps)));
-                if (capture.GetCaptureProperty(Emgu.CV.CvEnum.CapProp.PosFrames) >= capture.GetCaptureProperty(Emgu.CV.CvEnum.CapProp.FrameCount))
-                {
-                    capture.SetCaptureProperty(Emgu.CV.CvEnum.CapProp.PosFrames, 0);
                 }
             }
 
