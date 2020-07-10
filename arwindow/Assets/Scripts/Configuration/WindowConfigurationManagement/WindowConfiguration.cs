@@ -10,7 +10,7 @@ namespace Configuration.WindowConfigurationManagement
         private static readonly Lazy<WindowConfiguration> lazy = new Lazy<WindowConfiguration>(() => new WindowConfiguration());
         public static WindowConfiguration Instance => lazy.Value;
 
-        private const string windowConfigFile = "Assets/Config/WindowConfiguration.json";
+        private const string WINDOW_CONFIG_PATH = "Assets/Config/WindowConfiguration.json";
 
         public float Width { get; private set; } = 20;
         public float Height { get; private set; } = 15;
@@ -59,7 +59,7 @@ namespace Configuration.WindowConfigurationManagement
 
         public void UpdateConfiguration()
         {
-            var config = ConfigSerializer.ReadJsonFile(windowConfigFile);
+            var config = ConfigSerializer.ReadJsonFile(WINDOW_CONFIG_PATH);
 
             playerCameraAngleInDegree = config.Value<float>("playerCameraAngleInDegree");
             playerCameraXPos = config.Value<float>("playerCameraXPos");

@@ -184,8 +184,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   imageBox: {fileID: 345015746}
-  useCamera: 1
-  videoPath: 
+  useCamera: 0
 --- !u!114 &153785183
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -198,6 +197,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f8858721a3cadd5489c518fa002512ea, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  faceDetection: {fileID: 153785182}
 --- !u!1 &180888034
 GameObject:
   m_ObjectHideFlags: 0

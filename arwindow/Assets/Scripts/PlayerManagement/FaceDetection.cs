@@ -6,6 +6,7 @@ using System.Drawing;
 using PlayerManagement;
 using Configuration.WindowConfigurationManagement;
 using System.Threading;
+using Serialization;
 
 namespace ImageProcessing
 {
@@ -14,10 +15,10 @@ namespace ImageProcessing
         #region Private fields
         [SerializeField] private RawImage imageBox = null;
 
-        [SerializeField, Tooltip("Should face recognition use webcamera or prerecorded video footage?")]
+        [SerializeField, Tooltip("Should face recognition use webcamera or prerecorded video footage? (Video path is specified in LocalSettings.json)")]
         private bool useCamera = true;
-        [SerializeField, Tooltip("If video footage is used for face recognition, specify its access path.")]
         private string videoPath = "";
+        private const string CONFIG_PATH = "Assets/Config/LocalSettings.json";
 
         private static readonly string CASCADE_PATH = @"Assets/Plugins/EmguCV/haarcascade_frontalface_default.xml";
 
@@ -28,19 +29,30 @@ namespace ImageProcessing
         private const float z_dist = 5.0f; //Placeholder until we get actual depth data
         private PointF faceRectCenter = new PointF(0, 0);
         private Vector3 FacePos => RemapToCameraCoords(faceRectCenter);
-        private PlayerData playerData = new PlayerData { EyePosition = Vector3.zero };
+        private PlayerData playerData = new PlayerData { EyePosition = new Vector3(0,0,5) };
         #endregion
 
         // OnEnable is called just after the object is enabled
         void OnEnable()
         {
-            capture = useCamera ? new VideoCapture() : new VideoCapture(videoPath);
+            if (useCamera)
+            {
+                capture = new VideoCapture();
+            }
+            else if (videoPath != "")
+            {
+                capture = new VideoCapture(videoPath);
+            }
+            else return;
+
             cc = new CascadeClassifier(CASCADE_PATH);
         }
 
         // Update is called once per frame
         void Update()
         {
+            if (capture == null || cc == null) return;
+
             using (Image<Bgr, byte> img = capture.QueryFrame().ToImage<Bgr, byte>())
             {
                 imageSize = img.Size;
@@ -101,11 +113,23 @@ namespace ImageProcessing
             return cameraCoords;
         }
 
+        public void UpdateConfiguration()
+        {
+            this.enabled = false;
+
+            var config = ConfigSerializer.ReadJsonFile(CONFIG_PATH);
+
+            videoPath = config.Value<string>("videoPath");
+
+            //Call OnEnabled() so that the VideoCapture initializes properly
+            this.enabled = true;
+        }
+
         // Release resources when this object is not in use
         void OnDisable()
         {
-            cc.Dispose();
-            capture.Dispose();
+            if (cc != null) cc.Dispose();
+            if (capture != null) capture.Dispose();
         }
     }
 }
