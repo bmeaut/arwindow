@@ -6,6 +6,8 @@
 
   <ItemGroup>
     <PackageReference Include="Emgu.CV" Version="3.4.3.3016" />
+    <PackageReference Include="Injecter" Version="2.0.0" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="2.2.0" />
     <PackageReference Include="Microsoft.NETFramework.ReferenceAssemblies" Version="1.0.0" />
     <PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
   </ItemGroup>
