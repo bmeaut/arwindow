@@ -19,7 +19,7 @@ namespace ImageProcessing
         private string videoPath = "";
         private const string CONFIG_PATH = "Assets/Config/LocalSettings.json";
 
-        private static readonly string CASCADE_PATH = @"Assets/Scripts/Resources/haarcascade_frontalface_default.xml";
+        private static readonly string CASCADE_PATH = @"Assets/Resources/haarcascade_frontalface_default.xml";
 
         private Emgu.CV.VideoCapture capture;
         private CascadeClassifier cc;
