@@ -19,9 +19,9 @@ namespace ImageProcessing
         private string videoPath = "";
         private const string CONFIG_PATH = "Assets/Config/LocalSettings.json";
 
-        private static readonly string CASCADE_PATH = @"Assets/Plugins/EmguCV/haarcascade_frontalface_default.xml";
+        private static readonly string CASCADE_PATH = @"Assets/Scripts/Resources/haarcascade_frontalface_default.xml";
 
-        private VideoCapture capture;
+        private Emgu.CV.VideoCapture capture;
         private CascadeClassifier cc;
         private int videoFrameCount; //Number of frames in video file
         private int videoCaptureFps;
@@ -38,11 +38,11 @@ namespace ImageProcessing
         {
             if (useCamera)
             {
-                capture = new VideoCapture();
+                capture = new Emgu.CV.VideoCapture();
             }
             else if (videoPath != "")
             {
-                capture = new VideoCapture(videoPath);
+                capture = new Emgu.CV.VideoCapture(videoPath);
                 videoFrameCount = (int)capture.GetCaptureProperty(Emgu.CV.CvEnum.CapProp.FrameCount);
                 videoCaptureFps = (int)capture.GetCaptureProperty(Emgu.CV.CvEnum.CapProp.Fps);
 
