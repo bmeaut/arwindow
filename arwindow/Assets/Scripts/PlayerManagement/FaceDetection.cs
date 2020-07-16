@@ -32,6 +32,10 @@ namespace ImageProcessing
         private PointF faceRectCenter = new PointF(0, 0);
         private Vector3 FacePos => RemapToCameraCoords(faceRectCenter);
         private PlayerData playerData = new PlayerData { EyePosition = new Vector3(0,0,5) };
+
+        //debug texture to display detected face rects in the corner
+        Texture2D texture;
+
         #endregion
 
         // OnEnable is called just after the object is enabled
@@ -76,7 +80,8 @@ namespace ImageProcessing
                     DrawFaceMarkers(img, face);
                 }
 
-                Texture2D texture = new Texture2D(img.Width, img.Height);
+                if(texture is null)
+                    texture = new Texture2D(img.Width, img.Height);
                 texture.LoadImage(img.ToJpegData());
 
                 if (imageBox != null && imageBox.isActiveAndEnabled)
