@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using Configuration.WindowConfigurationManagement;
 using ImageProcessing;
+using Injecter;
 
 namespace Configuration
 {
@@ -14,10 +15,14 @@ namespace Configuration
     {
         public FaceDetection faceDetection;
 
+        [Inject] private readonly WindowConfiguration windowConfiguration;
+
+        private ConfigurationManager(){ }
+
         // Start is called before the first frame update
         void Start()
         {
-            WindowConfiguration.Instance.UpdateConfiguration();
+            windowConfiguration.UpdateConfiguration();
 
             // We _could_ call this from FaceDetection's Start(), but it's here just for consistency
             faceDetection.UpdateConfiguration();

@@ -7,9 +7,6 @@ namespace Configuration.WindowConfigurationManagement
 {
     public class WindowConfiguration
     {
-        private static readonly Lazy<WindowConfiguration> lazy = new Lazy<WindowConfiguration>(() => new WindowConfiguration());
-        public static WindowConfiguration Instance => lazy.Value;
-
         private const string WINDOW_CONFIG_PATH = "Assets/Config/WindowConfiguration.json";
 
         public float Width { get; private set; } = 20;

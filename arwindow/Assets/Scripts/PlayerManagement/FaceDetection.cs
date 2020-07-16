@@ -6,12 +6,15 @@ using System.Drawing;
 using PlayerManagement;
 using Configuration.WindowConfigurationManagement;
 using Serialization;
+using Injecter;
 
 namespace ImageProcessing
 {
     public class FaceDetection : IPlayerManager
     {
         #region Private fields
+        [Inject] private readonly WindowConfiguration windowConfiguration;
+
         [SerializeField] private RawImage imageBox = null;
 
         [SerializeField, Tooltip("Should face recognition use webcamera or prerecorded video footage? (Video path is specified in LocalSettings.json)")]
@@ -109,8 +112,8 @@ namespace ImageProcessing
         private Vector3 RemapToCameraCoords(PointF point)
         {
             var cameraCoords = new Vector3(0, 0, z_dist);
-            cameraCoords.x = WindowConfiguration.Instance.Width * ((point.X / imageSize.Width) - 0.5f);
-            cameraCoords.y = -1.0f * WindowConfiguration.Instance.Height * ((point.Y / imageSize.Height) - 0.5f);
+            cameraCoords.x = windowConfiguration.Width * ((point.X / imageSize.Width) - 0.5f);
+            cameraCoords.y = -1.0f * windowConfiguration.Height * ((point.Y / imageSize.Height) - 0.5f);
 
             return cameraCoords;
         }

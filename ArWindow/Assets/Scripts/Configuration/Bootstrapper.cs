@@ -3,6 +3,9 @@ using System.Collections;
 using Injecter.Unity;
 using System;
 using Microsoft.Extensions.DependencyInjection;
+using ImageProcessing;
+using Configuration;
+using Configuration.WindowConfigurationManagement;
 
 /// <summary>
 /// DI Bootstrapper based on
@@ -28,10 +31,13 @@ public sealed class Bootstrapper : InjectStarter
         // Use the usual IServiceCollection methods
         //TODO: Add services here
         //services.AddTransient<IExampleService, ExampleService>();
-        //services.AddSingleton<I,>();
+        services.AddSingleton<WindowConfiguration>();
 
         // Resolve scripts already in the scene with FindObjectOfType()
-        //services.AddSingleton<MonoBehaviourService>(_ => GameObject.FindObjectOfType<MonoBehaviourService>());
+        //TODO: Add services here
+        services.AddSingleton(_ => FindObjectOfType<Core>());
+        services.AddSingleton(_ => FindObjectOfType<FaceDetection>());
+        services.AddSingleton(_ => FindObjectOfType<ConfigurationManager>());
 
         return services.BuildServiceProvider();
     }
