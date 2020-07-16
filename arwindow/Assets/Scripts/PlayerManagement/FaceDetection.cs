@@ -17,6 +17,7 @@ namespace ImageProcessing
         [SerializeField, Tooltip("Should face recognition use webcamera or prerecorded video footage? (Video path is specified in LocalSettings.json)")]
         private bool useCamera = true;
         private string videoPath = "";
+        private int cameraId = 1;
         private const string CONFIG_PATH = "Assets/Config/LocalSettings.json";
 
         private static readonly string CASCADE_PATH = @"Assets/Resources/haarcascade_frontalface_default.xml";
@@ -38,7 +39,7 @@ namespace ImageProcessing
         {
             if (useCamera)
             {
-                capture = new Emgu.CV.VideoCapture();
+                capture = new Emgu.CV.VideoCapture(cameraId);
             }
             else if (videoPath != "")
             {
@@ -122,6 +123,7 @@ namespace ImageProcessing
             var config = ConfigSerializer.ReadJsonFile(CONFIG_PATH);
 
             videoPath = config.Value<string>("videoPath");
+            cameraId = config.Value<int>("cameraId");
 
             //Call OnEnabled() so that the VideoCapture initializes properly
             this.enabled = true;
