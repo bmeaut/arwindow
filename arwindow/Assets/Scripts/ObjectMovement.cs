@@ -24,10 +24,11 @@ namespace ARObjects
         void Start()
         {
             rb = GetComponent<Rigidbody>();
+            var window = FindObjectOfType<WindowConfiguration>();
 
             startPos = transform.position;
-            float windowWidth = WindowConfiguration.Instance.Width;
-            float windowHeight = WindowConfiguration.Instance.Height;
+            float windowWidth = window.Width;
+            float windowHeight = window.Height;
             boundsX = new Vector2(startPos.x - windowWidth, startPos.x + windowWidth);
             boundsY = new Vector2(startPos.y - windowHeight, startPos.y + windowHeight);
             boundsZ = new Vector2(startPos.z - 10, startPos.z + 10);

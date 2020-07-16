@@ -8,9 +8,12 @@ public class Core : MonoBehaviour
     [SerializeField] private Camera renderCamera;
     [SerializeField] private Transform windowCenter;
 
+    private WindowConfiguration windowConfiguration;
+
     private void Start()
     {
-        renderCamera.aspect = WindowConfiguration.Instance.Width / WindowConfiguration.Instance.Height;
+        windowConfiguration = windowCenter.GetComponent<WindowConfiguration>();
+        renderCamera.aspect = windowConfiguration.Width / windowConfiguration.Height;
     }
 
     private void Update()
@@ -22,9 +25,9 @@ public class Core : MonoBehaviour
         renderCamera.transform.LookAt(windowCenter);
 
         var left = centre;
-        left.x -= WindowConfiguration.Instance.Width / 2f;
+        left.x -= windowConfiguration.Width / 2f;
         var right = centre;
-        right.x += WindowConfiguration.Instance.Width / 2f;
+        right.x += windowConfiguration.Width / 2f;
 
         var vleft = (left - playerData.EyePosition).normalized;
         var vright = (right - playerData.EyePosition).normalized;
@@ -33,12 +36,5 @@ public class Core : MonoBehaviour
         Debug.DrawRay(playerData.EyePosition, vright * 1000, Color.blue);
         
         renderCamera.fieldOfView = Vector3.Angle(vleft, vright);
-    }
-
-    void OnDrawGizmos()
-    {
-        // Visualize window borders in Unity editor
-        var window = WindowConfiguration.Instance;
-        Gizmos.DrawWireCube(windowCenter.position, new Vector3(window.Width, window.Height, 0.01f));
     }
 }

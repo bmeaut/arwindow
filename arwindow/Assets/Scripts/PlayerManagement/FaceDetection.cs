@@ -12,7 +12,8 @@ namespace ImageProcessing
     public class FaceDetection : IPlayerManager
     {
         #region Private fields
-        [SerializeField] private RawImage imageBox = null;
+        [SerializeField] private RawImage imageBox;
+        [SerializeField] private WindowConfiguration window;
 
         [SerializeField, Tooltip("Should face recognition use webcamera or prerecorded video footage? (Video path is specified in LocalSettings.json)")]
         private bool useCamera = true;
@@ -32,6 +33,14 @@ namespace ImageProcessing
         private Vector3 FacePos => RemapToCameraCoords(faceRectCenter);
         private PlayerData playerData = new PlayerData { EyePosition = new Vector3(0,0,5) };
         #endregion
+
+        void Awake()
+        {
+            if (imageBox == null) imageBox = FindObjectOfType<RawImage>();
+            if (window == null) window = FindObjectOfType<WindowConfiguration>();
+
+            UpdateConfiguration();
+        }
 
         // OnEnable is called just after the object is enabled
         void OnEnable()
@@ -57,13 +66,13 @@ namespace ImageProcessing
         {
             if (capture == null || cc == null) return;
 
-            
+
             if (!useCamera)
             {//seek to correct video frame
                 var vframe = (Time.time * videoCaptureFps) % videoFrameCount;
                 capture.SetCaptureProperty(Emgu.CV.CvEnum.CapProp.PosFrames, vframe);
             }
-            
+
             using (Image<Bgr, byte> img = capture.QueryFrame().ToImage<Bgr, byte>())
             {
                 imageSize = img.Size;
@@ -109,22 +118,16 @@ namespace ImageProcessing
         private Vector3 RemapToCameraCoords(PointF point)
         {
             var cameraCoords = new Vector3(0, 0, z_dist);
-            cameraCoords.x = WindowConfiguration.Instance.Width * ((point.X / imageSize.Width) - 0.5f);
-            cameraCoords.y = -1.0f * WindowConfiguration.Instance.Height * ((point.Y / imageSize.Height) - 0.5f);
+            cameraCoords.x = window.Width * ((point.X / imageSize.Width) - 0.5f);
+            cameraCoords.y = -1.0f * window.Height * ((point.Y / imageSize.Height) - 0.5f);
 
             return cameraCoords;
         }
 
-        public void UpdateConfiguration()
+        private void UpdateConfiguration()
         {
-            this.enabled = false;
-
             var config = ConfigSerializer.ReadJsonFile(CONFIG_PATH);
-
             videoPath = config.Value<string>("videoPath");
-
-            //Call OnEnabled() so that the VideoCapture initializes properly
-            this.enabled = true;
         }
 
         // Release resources when this object is not in use

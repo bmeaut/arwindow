@@ -5,11 +5,8 @@ using Newtonsoft.Json;
 
 namespace Configuration.WindowConfigurationManagement
 {
-    public class WindowConfiguration
+    public class WindowConfiguration : MonoBehaviour
     {
-        private static readonly Lazy<WindowConfiguration> lazy = new Lazy<WindowConfiguration>(() => new WindowConfiguration());
-        public static WindowConfiguration Instance => lazy.Value;
-
         private const string WINDOW_CONFIG_PATH = "Assets/Config/WindowConfiguration.json";
 
         public float Width { get; private set; } = 20;
@@ -19,9 +16,6 @@ namespace Configuration.WindowConfigurationManagement
         [JsonProperty] private float playerCameraXPos = 0;
         [JsonProperty] private float playerCameraYPos = 5;
         private float targetCameraAngleInDegree, targetCameraYPos, targetCameraXPos;
-
-        private WindowConfiguration() { }
-
 
         public Vector3 PlayerCameraPointToWindowCenteredPoint(Vector3 point)
         {
@@ -57,7 +51,12 @@ namespace Configuration.WindowConfigurationManagement
             };
         }
 
-        public void UpdateConfiguration()
+        void Awake()
+        {
+            UpdateConfiguration();
+        }
+
+        private void UpdateConfiguration()
         {
             var config = ConfigSerializer.ReadJsonFile(WINDOW_CONFIG_PATH);
 
@@ -66,6 +65,12 @@ namespace Configuration.WindowConfigurationManagement
             playerCameraYPos = config.Value<float>("playerCameraYPos");
             Width = config.Value<float>("Width");
             Height = config.Value<float>("Height");
+        }
+
+        void OnDrawGizmos()
+        {
+            // Visualize window borders in Unity editor
+            Gizmos.DrawWireCube(transform.position, new Vector3(Width, Height, 0.01f));
         }
     }
 }
