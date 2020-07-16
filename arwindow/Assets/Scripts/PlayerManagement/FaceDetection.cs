@@ -18,6 +18,7 @@ namespace ImageProcessing
         [SerializeField, Tooltip("Should face recognition use webcamera or prerecorded video footage? (Video path is specified in LocalSettings.json)")]
         private bool useCamera = true;
         private string videoPath = "";
+        private int cameraId = 1;
         private const string CONFIG_PATH = "Assets/Config/LocalSettings.json";
 
         private static readonly string CASCADE_PATH = @"Assets/Resources/haarcascade_frontalface_default.xml";
@@ -32,6 +33,10 @@ namespace ImageProcessing
         private PointF faceRectCenter = new PointF(0, 0);
         private Vector3 FacePos => RemapToCameraCoords(faceRectCenter);
         private PlayerData playerData = new PlayerData { EyePosition = new Vector3(0,0,5) };
+
+        //debug texture to display detected face rects in the corner
+        Texture2D texture;
+
         #endregion
 
         void Awake()
@@ -47,7 +52,7 @@ namespace ImageProcessing
         {
             if (useCamera)
             {
-                capture = new Emgu.CV.VideoCapture();
+                capture = new Emgu.CV.VideoCapture(cameraId);
             }
             else if (videoPath != "")
             {
@@ -84,7 +89,8 @@ namespace ImageProcessing
                     DrawFaceMarkers(img, face);
                 }
 
-                Texture2D texture = new Texture2D(img.Width, img.Height);
+                if(texture is null)
+                    texture = new Texture2D(img.Width, img.Height);
                 texture.LoadImage(img.ToJpegData());
 
                 if (imageBox != null && imageBox.isActiveAndEnabled)
@@ -128,6 +134,7 @@ namespace ImageProcessing
         {
             var config = ConfigSerializer.ReadJsonFile(CONFIG_PATH);
             videoPath = config.Value<string>("videoPath");
+            cameraId = config.Value<int>("cameraId");
         }
 
         // Release resources when this object is not in use
