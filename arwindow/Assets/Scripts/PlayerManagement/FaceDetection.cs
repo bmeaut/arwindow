@@ -9,7 +9,7 @@ using Serialization;
 
 namespace ImageProcessing
 {
-    public class FaceDetection : IPlayerManager
+    public class FaceDetection : MonoBehaviour, IPlayerManager
     {
         #region Private fields
         [SerializeField] private RawImage imageBox;
@@ -102,7 +102,7 @@ namespace ImageProcessing
             playerData.EyePosition = FacePos;
         }
 
-        public override PlayerData GetPlayerData()
+        public PlayerData GetPlayerData()
         {
             return playerData;
         }

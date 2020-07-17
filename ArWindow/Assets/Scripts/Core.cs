@@ -4,11 +4,12 @@ using Configuration.WindowConfigurationManagement;
 
 public class Core : MonoBehaviour
 {
-    [SerializeField] private IPlayerManager playerManager;
+    [SerializeField, InterfaceType(typeof(IPlayerManager))] private MonoBehaviour playerManager;
     [SerializeField] private Camera renderCamera;
     [SerializeField] private Transform windowCenter;
 
     private WindowConfiguration windowConfiguration;
+    private IPlayerManager PlayerManager => playerManager as IPlayerManager;
 
     private void Start()
     {
@@ -18,7 +19,7 @@ public class Core : MonoBehaviour
 
     private void Update()
     {
-        var playerData = playerManager.GetPlayerData();
+        var playerData = PlayerManager.GetPlayerData();
         var centre = windowCenter.position;
 
         renderCamera.transform.position = centre + playerData.EyePosition;

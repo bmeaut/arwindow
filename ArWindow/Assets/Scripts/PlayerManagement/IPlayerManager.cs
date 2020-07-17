@@ -2,8 +2,8 @@
 
 namespace PlayerManagement
 {
-    public abstract class IPlayerManager : MonoBehaviour
+    public interface IPlayerManager
     {
-        public abstract PlayerData GetPlayerData();
+        PlayerData GetPlayerData();
     }
 }
