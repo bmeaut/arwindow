@@ -1,8 +1,10 @@
-﻿namespace PlayerManagement
+﻿using UnityEngine;
+
+namespace PlayerManagement
 {
-    public class StaticPlayerManager : IPlayerManager
+    public class StaticPlayerManager : MonoBehaviour, IPlayerManager
     {
-        public override PlayerData GetPlayerData()
+        public PlayerData GetPlayerData()
         {
             return new PlayerData {EyePosition = transform.position};
         }
