@@ -154,7 +154,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 30da71364f21586418a72b0d2081693a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  playerManager: {fileID: 339747359}
+  faceDataProvider: {fileID: 153785182}
   renderCamera: {fileID: 729493371}
   windowCenter: {fileID: 369393699}
 --- !u!4 &153785181
@@ -184,7 +184,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 156aa0a54e304134182db55f71f4bbde, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  imageBox: {fileID: 345015746}
   window: {fileID: 369393700}
   imageCapture: {fileID: 153785183}
 --- !u!114 &153785183

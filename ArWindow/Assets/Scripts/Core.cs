@@ -6,7 +6,7 @@ namespace ARWindow.Core
 {
     public class Core : MonoBehaviour
     {
-        [SerializeField] private IPlayerManager playerManager;
+        [SerializeField] private IFaceDataProvider faceDataProvider;
         [SerializeField] private Camera renderCamera;
         [SerializeField] private Transform windowCenter;
 
@@ -20,10 +20,10 @@ namespace ARWindow.Core
 
         private void Update()
         {
-            var playerData = playerManager.GetPlayerData();
+            var eyePosition = faceDataProvider.GetFacePosition();
             var centre = windowCenter.position;
 
-            renderCamera.transform.position = centre + playerData.EyePosition;
+            renderCamera.transform.position = centre + eyePosition;
             renderCamera.transform.LookAt(windowCenter);
 
             var left = centre;
@@ -31,11 +31,11 @@ namespace ARWindow.Core
             var right = centre;
             right.x += windowConfiguration.Width / 2f;
 
-            var vleft = (left - playerData.EyePosition).normalized;
-            var vright = (right - playerData.EyePosition).normalized;
+            var vleft = (left - eyePosition).normalized;
+            var vright = (right - eyePosition).normalized;
 
-            Debug.DrawRay(playerData.EyePosition, vleft * 1000, Color.green);
-            Debug.DrawRay(playerData.EyePosition, vright * 1000, Color.blue);
+            Debug.DrawRay(eyePosition, vleft * 1000, Color.green);
+            Debug.DrawRay(eyePosition, vright * 1000, Color.blue);
 
             renderCamera.fieldOfView = Vector3.Angle(vleft, vright);
         }

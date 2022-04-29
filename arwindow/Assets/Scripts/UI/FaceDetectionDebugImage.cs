@@ -1,5 +1,5 @@
 using ARWindow.ImageCapture;
-using ARWindow.ImageProcessing;
+using ARWindow.PlayerManagement;
 using Emgu.CV;
 using Emgu.CV.Structure;
 using System.Drawing;
@@ -11,7 +11,7 @@ namespace ARWindow.UI.Debug
     public class FaceDetectionDebugImage : MonoBehaviour
     {
         [SerializeField] private IImageCapture imageCapture;
-        [SerializeField] private FaceDetection faceDetection; //TODO: erre valami generikusabb megoldást találni
+        [SerializeField] private IFaceDataProvider faceDetection;
         [SerializeField] private RawImage imageBox;
         //debug texture to display detected face rects in the corner
         Texture2D texture;
@@ -29,8 +29,8 @@ namespace ARWindow.UI.Debug
             {
                 if (img == null) return;
 
-                if (faceDetection.detectedFace != default)
-                    DrawFaceMarkers(img, faceDetection.detectedFace);
+                if (faceDetection.GetFaceRect() != default)
+                    DrawFaceMarkers(img, faceDetection.GetFaceRect());
 
                 if (texture is null)
                     texture = new Texture2D(img.Width, img.Height);

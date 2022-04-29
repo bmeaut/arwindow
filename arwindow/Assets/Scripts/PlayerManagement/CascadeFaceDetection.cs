@@ -8,7 +8,7 @@ using ARWindow.PlayerManagement;
 
 namespace ARWindow.ImageProcessing
 {
-    public class FaceDetection : IPlayerManager
+    public class CascadeFaceDetection : IFaceDataProvider
     {
         #region Properties and private fields
         [SerializeField] private WindowConfiguration window;
@@ -20,11 +20,14 @@ namespace ARWindow.ImageProcessing
 
         private Size imageSize;
         private const float z_dist = 5.0f; //Placeholder until we get actual depth data
-        private PointF faceRectCenter = new PointF(0, 0);
+        private PointF faceRectCenter = default;
         private Vector3 FacePos => RemapToCameraCoords(faceRectCenter);
-        private PlayerData playerData = new PlayerData { EyePosition = new Vector3(0, 0, 5) };
-        public Rectangle detectedFace { get; private set; }
+        private Rectangle detectedFace;
         #endregion
+
+        public override Vector3 GetFacePosition() => faceRectCenter != default ? FacePos : new Vector3(0,0,5);
+        public override Rectangle GetFaceRect() => detectedFace;
+
 
         void Awake()
         {
@@ -58,12 +61,6 @@ namespace ARWindow.ImageProcessing
             }
 
             faceRectCenter = GetRectCenter(detectedFace);
-            playerData.EyePosition = FacePos;
-        }
-
-        public override PlayerData GetPlayerData()
-        {
-            return playerData;
         }
 
         private static PointF GetRectCenter(Rectangle rect)
