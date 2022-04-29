@@ -1,13 +1,15 @@
-﻿using PlayerManagement;
-using UnityEngine;
-using Configuration.WindowConfigurationManagement;
+﻿using UnityEngine;
+using ARWindow.PlayerManagement;
+using ARWindow.Configuration.WindowConfigurationManagement;
 using Injecter;
 
-public class Core : MonoBehaviour
+namespace ARWindow.Core
 {
-    [SerializeField] private IPlayerManager playerManager;
-    [SerializeField] private Camera renderCamera;
-    [SerializeField] private Transform windowCenter;
+    public class Core : MonoBehaviour
+    {
+        [SerializeField] private IFaceDataProvider faceDataProvider;
+        [SerializeField] private Camera renderCamera;
+        [SerializeField] private Transform windowCenter;
 
     [Inject] private readonly WindowConfiguration windowConfiguration;
 
@@ -16,32 +18,26 @@ public class Core : MonoBehaviour
         renderCamera.aspect = windowConfiguration.Width / windowConfiguration.Height;
     }
 
-    private void Update()
-    {
-        var playerData = playerManager.GetPlayerData();
-        var centre = windowCenter.position;
+        private void Update()
+        {
+            var eyePosition = faceDataProvider.GetFacePosition();
+            var centre = windowCenter.position;
 
-        renderCamera.transform.position = centre + playerData.EyePosition;
-        renderCamera.transform.LookAt(windowCenter);
+            renderCamera.transform.position = centre + eyePosition;
+            renderCamera.transform.LookAt(windowCenter);
 
-        var left = centre;
-        left.x -= windowConfiguration.Width / 2f;
-        var right = centre;
-        right.x += windowConfiguration.Width / 2f;
+            var left = centre;
+            left.x -= windowConfiguration.Width / 2f;
+            var right = centre;
+            right.x += windowConfiguration.Width / 2f;
 
-        var vleft = (left - playerData.EyePosition).normalized;
-        var vright = (right - playerData.EyePosition).normalized;
+            var vleft = (left - eyePosition).normalized;
+            var vright = (right - eyePosition).normalized;
 
-        Debug.DrawRay(playerData.EyePosition, vleft * 1000, Color.green);
-        Debug.DrawRay(playerData.EyePosition, vright * 1000, Color.blue);
-        
-        renderCamera.fieldOfView = Vector3.Angle(vleft, vright);
-    }
+            Debug.DrawRay(eyePosition, vleft * 1000, Color.green);
+            Debug.DrawRay(eyePosition, vright * 1000, Color.blue);
 
-    void OnDrawGizmos()
-    {
-        // Visualize window borders in Unity editor
-        var window = windowConfiguration;
-        Gizmos.DrawWireCube(windowCenter.position, new Vector3(window.Width, window.Height, 0.01f));
+            renderCamera.fieldOfView = Vector3.Angle(vleft, vright);
+        }
     }
 }

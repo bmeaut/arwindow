@@ -2,7 +2,7 @@
 using Newtonsoft.Json.Linq;
 using System.IO;
 
-namespace Serialization
+namespace ARWindow.Serialization
 {
     public static class ConfigSerializer
     {
