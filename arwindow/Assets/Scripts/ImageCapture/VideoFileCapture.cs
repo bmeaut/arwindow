@@ -14,7 +14,8 @@ namespace ImageCapture
         private int videoFrameCount; //Number of frames in video file
         private int videoCaptureFps;
 
-        public override Image<Bgr, byte> ImageFrame => capture?.QueryFrame().ToImage<Bgr, byte>();
+        public override Image<Bgr, byte> ImageFrame => _imgFrame;
+        private Image<Bgr, byte> _imgFrame;
 
         private void Awake()
         {
@@ -44,6 +45,8 @@ namespace ImageCapture
             //seek to correct video frame
             var vframe = (Time.time * videoCaptureFps) % videoFrameCount;
             capture.SetCaptureProperty(CapProp.PosFrames, vframe);
+
+            _imgFrame = capture.QueryFrame().ToImage<Bgr, byte>();
         }
 
         private void OnDisable()

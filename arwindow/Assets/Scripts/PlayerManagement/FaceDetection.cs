@@ -1,5 +1,4 @@
 ﻿using UnityEngine;
-using UnityEngine.UI;
 using Emgu.CV;
 using Emgu.CV.Structure;
 using System.Drawing;
@@ -11,8 +10,7 @@ namespace ImageProcessing
 {
     public class FaceDetection : IPlayerManager
     {
-        #region Private fields
-        [SerializeField] private RawImage imageBox;
+        #region Properties and private fields
         [SerializeField] private WindowConfiguration window;
         [SerializeField] private IImageCapture imageCapture;
 
@@ -25,15 +23,11 @@ namespace ImageProcessing
         private PointF faceRectCenter = new PointF(0, 0);
         private Vector3 FacePos => RemapToCameraCoords(faceRectCenter);
         private PlayerData playerData = new PlayerData { EyePosition = new Vector3(0, 0, 5) };
-
-        //debug texture to display detected face rects in the corner
-        Texture2D texture;
-
+        public Rectangle detectedFace { get; private set; }
         #endregion
 
         void Awake()
         {
-            if (imageBox == null) imageBox = FindObjectOfType<RawImage>();
             if (window == null) window = FindObjectOfType<WindowConfiguration>();
         }
 
@@ -55,36 +49,21 @@ namespace ImageProcessing
                 imageSize = img.Size;
 
                 var faces = cc.DetectMultiScale(img, 1.1, 10);
-                foreach (Rectangle face in faces)
+                if (faces.Length == 0)
                 {
-                    faceRectCenter = GetRectCenter(face);
-                    DrawFaceMarkers(img, face);
+                    detectedFace = default;
+                    return;
                 }
-
-                if (texture is null)
-                    texture = new Texture2D(img.Width, img.Height);
-                texture.LoadImage(img.ToJpegData());
-
-                if (imageBox != null && imageBox.isActiveAndEnabled)
-                {
-                    imageBox.texture = texture;
-                }
+                detectedFace = faces[0];
             }
 
+            faceRectCenter = GetRectCenter(detectedFace);
             playerData.EyePosition = FacePos;
         }
 
         public override PlayerData GetPlayerData()
         {
             return playerData;
-        }
-
-        private void DrawFaceMarkers(Image<Bgr, byte> img, Rectangle face)
-        {
-            img.Draw(face, new Bgr(System.Drawing.Color.Red), 4);
-            img.Draw(new Rectangle((int)faceRectCenter.X, (int)faceRectCenter.Y, 1, 1),
-                     new Bgr(System.Drawing.Color.Magenta),
-                     5);
         }
 
         private static PointF GetRectCenter(Rectangle rect)
