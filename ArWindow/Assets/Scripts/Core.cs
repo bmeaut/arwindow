@@ -11,12 +11,12 @@ namespace ARWindow.Core
         [SerializeField] private Camera renderCamera;
         [SerializeField] private Transform windowCenter;
 
-    [Inject] private readonly WindowConfiguration windowConfiguration;
+        [Inject] private readonly WindowConfiguration windowConfiguration;
 
-    private void Start()
-    {
-        renderCamera.aspect = windowConfiguration.Width / windowConfiguration.Height;
-    }
+        private void Start()
+        {
+            renderCamera.aspect = windowConfiguration.Width / windowConfiguration.Height;
+        }
 
         private void Update()
         {

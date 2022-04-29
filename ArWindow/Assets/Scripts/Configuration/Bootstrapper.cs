@@ -3,9 +3,9 @@ using System.Collections;
 using Injecter.Unity;
 using System;
 using Microsoft.Extensions.DependencyInjection;
-using ImageProcessing;
-using Configuration;
-using Configuration.WindowConfigurationManagement;
+using ARWindow.ImageProcessing;
+using ARWindow.Configuration.WindowConfigurationManagement;
+using ARWindow.Core;
 
 /// <summary>
 /// DI Bootstrapper based on
@@ -31,13 +31,13 @@ public sealed class Bootstrapper : InjectStarter
         // Use the usual IServiceCollection methods
         //TODO: Add services here
         //services.AddTransient<IExampleService, ExampleService>();
-        services.AddSingleton<WindowConfiguration>();
+        //services.AddSingleton<WindowConfiguration>();
 
         // Resolve scripts already in the scene with FindObjectOfType()
         //TODO: Add services here
+        services.AddSingleton(_ => FindObjectOfType<WindowConfiguration>());
         services.AddSingleton(_ => FindObjectOfType<Core>());
-        services.AddSingleton(_ => FindObjectOfType<FaceDetection>());
-        services.AddSingleton(_ => FindObjectOfType<ConfigurationManager>());
+        services.AddSingleton(_ => FindObjectOfType<CascadeFaceDetection>());
 
         return services.BuildServiceProvider();
     }
