@@ -1,10 +1,10 @@
+using ARWindow.Serialization;
 using Emgu.CV;
 using Emgu.CV.CvEnum;
 using Emgu.CV.Structure;
-using Serialization;
 using UnityEngine;
 
-namespace ImageCapture
+namespace ARWindow.ImageCapture
 {
     public class VideoFileCapture : IImageCapture
     {

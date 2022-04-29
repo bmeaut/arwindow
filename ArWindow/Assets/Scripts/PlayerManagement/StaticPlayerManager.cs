@@ -1,4 +1,4 @@
-﻿namespace PlayerManagement
+﻿namespace ARWindow.PlayerManagement
 {
     public class StaticPlayerManager : IPlayerManager
     {

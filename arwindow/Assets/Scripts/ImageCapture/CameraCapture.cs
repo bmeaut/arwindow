@@ -1,8 +1,8 @@
+using ARWindow.Serialization;
 using Emgu.CV;
 using Emgu.CV.Structure;
-using Serialization;
 
-namespace ImageCapture
+namespace ARWindow.ImageCapture
 {
     public class CameraCapture : IImageCapture
     {

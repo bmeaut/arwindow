@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-namespace PlayerManagement
+namespace ARWindow.PlayerManagement
 {
     public abstract class IPlayerManager : MonoBehaviour
     {

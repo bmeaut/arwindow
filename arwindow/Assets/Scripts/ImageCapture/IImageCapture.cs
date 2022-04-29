@@ -2,7 +2,7 @@ using UnityEngine;
 using Emgu.CV;
 using Emgu.CV.Structure;
 
-namespace ImageCapture
+namespace ARWindow.ImageCapture
 {
     public abstract class IImageCapture : MonoBehaviour
     {

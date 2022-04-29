@@ -1,12 +1,12 @@
+using ARWindow.ImageCapture;
+using ARWindow.ImageProcessing;
 using Emgu.CV;
 using Emgu.CV.Structure;
-using ImageCapture;
-using ImageProcessing;
 using System.Drawing;
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace UI.Debug
+namespace ARWindow.UI.Debug
 {
     public class FaceDetectionDebugImage : MonoBehaviour
     {

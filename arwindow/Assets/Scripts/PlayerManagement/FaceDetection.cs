@@ -2,11 +2,11 @@
 using Emgu.CV;
 using Emgu.CV.Structure;
 using System.Drawing;
-using PlayerManagement;
-using Configuration.WindowConfigurationManagement;
-using ImageCapture;
+using ARWindow.Configuration.WindowConfigurationManagement;
+using ARWindow.ImageCapture;
+using ARWindow.PlayerManagement;
 
-namespace ImageProcessing
+namespace ARWindow.ImageProcessing
 {
     public class FaceDetection : IPlayerManager
     {

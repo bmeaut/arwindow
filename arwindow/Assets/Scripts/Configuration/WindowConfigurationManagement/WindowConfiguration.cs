@@ -1,9 +1,9 @@
-﻿using Serialization;
-using System;
+﻿using System;
 using UnityEngine;
 using Newtonsoft.Json;
+using ARWindow.Serialization;
 
-namespace Configuration.WindowConfigurationManagement
+namespace ARWindow.Configuration.WindowConfigurationManagement
 {
     public class WindowConfiguration : MonoBehaviour
     {
