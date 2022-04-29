@@ -1,8 +1,8 @@
-﻿using Configuration.WindowConfigurationManagement;
+﻿using ARWindow.Configuration.WindowConfigurationManagement;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
-namespace ARObjects
+namespace ARWindow.ARObjects
 {
     public class ObjectMovement : MonoBehaviour
     {

@@ -134,6 +134,7 @@ GameObject:
   - component: {fileID: 153785181}
   - component: {fileID: 153785180}
   - component: {fileID: 153785182}
+  - component: {fileID: 153785183}
   m_Layer: 0
   m_Name: Core
   m_TagString: Untagged
@@ -153,7 +154,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 30da71364f21586418a72b0d2081693a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  playerManager: {fileID: 339747359}
+  faceDataProvider: {fileID: 153785182}
   renderCamera: {fileID: 729493371}
   windowCenter: {fileID: 369393699}
 --- !u!4 &153785181
@@ -183,9 +184,20 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 156aa0a54e304134182db55f71f4bbde, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  imageBox: {fileID: 345015746}
   window: {fileID: 369393700}
-  useCamera: 0
+  imageCapture: {fileID: 153785183}
+--- !u!114 &153785183
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 153785179}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b1d9a4175eab25f489ae129f6c84f89c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &180888034
 GameObject:
   m_ObjectHideFlags: 0
@@ -342,6 +354,7 @@ GameObject:
   - component: {fileID: 345015745}
   - component: {fileID: 345015747}
   - component: {fileID: 345015746}
+  - component: {fileID: 345015748}
   m_Layer: 5
   m_Name: CameraImage
   m_TagString: Untagged
@@ -404,6 +417,21 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 345015744}
   m_CullTransparentMesh: 0
+--- !u!114 &345015748
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 345015744}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 497b30b0b0451d648b72630264a00124, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  imageCapture: {fileID: 153785183}
+  faceDetection: {fileID: 153785182}
+  imageBox: {fileID: 345015746}
 --- !u!1 &369393698
 GameObject:
   m_ObjectHideFlags: 0
