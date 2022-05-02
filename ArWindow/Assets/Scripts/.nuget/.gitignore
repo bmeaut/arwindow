@@ -1,4 +1,4 @@
 !*.csproj
-# nuget
+# build output
 bin/
 obj/

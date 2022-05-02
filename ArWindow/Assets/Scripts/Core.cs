@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using ARWindow.PlayerManagement;
 using ARWindow.Configuration.WindowConfigurationManagement;
+using Injecter;
 
 namespace ARWindow.Core
 {
@@ -10,11 +11,10 @@ namespace ARWindow.Core
         [SerializeField] private Camera renderCamera;
         [SerializeField] private Transform windowCenter;
 
-        private WindowConfiguration windowConfiguration;
+        [Inject] private readonly WindowConfiguration windowConfiguration;
 
         private void Start()
         {
-            windowConfiguration = windowCenter.GetComponent<WindowConfiguration>();
             renderCamera.aspect = windowConfiguration.Width / windowConfiguration.Height;
         }
 
