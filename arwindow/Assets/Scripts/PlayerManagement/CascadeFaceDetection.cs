@@ -5,13 +5,14 @@ using System.Drawing;
 using ARWindow.Configuration.WindowConfigurationManagement;
 using ARWindow.ImageCapture;
 using ARWindow.PlayerManagement;
+using Injecter;
 
 namespace ARWindow.ImageProcessing
 {
     public class CascadeFaceDetection : IFaceDataProvider
     {
         #region Properties and private fields
-        [SerializeField] private WindowConfiguration window;
+        [Inject] private WindowConfiguration window;
         [SerializeField] private IImageCapture imageCapture;
 
         private static readonly string CASCADE_PATH = @"Assets/Resources/haarcascade_frontalface_default.xml";
@@ -28,11 +29,6 @@ namespace ARWindow.ImageProcessing
         public override Vector3 GetFacePosition() => faceRectCenter != default ? FacePos : new Vector3(0,0,5);
         public override Rectangle GetFaceRect() => detectedFace;
 
-
-        void Awake()
-        {
-            if (window == null) window = FindObjectOfType<WindowConfiguration>();
-        }
 
         // OnEnable is called just after the object is enabled
         void OnEnable()
