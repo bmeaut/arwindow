@@ -41,7 +41,7 @@ namespace ARWindow.ImageProcessing
         {
             if (cc == null) return;
 
-            using (Image<Bgr, byte> img = imageCapture.ImageFrame)
+            using (Image<Bgr, byte> img = imageCapture.ImageFrame?.Clone())
             {
                 if (img == null) return;
 
