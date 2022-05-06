@@ -7,24 +7,25 @@ using Emgu.CV;
 using Emgu.CV.Structure;
 using ARWindow.PlayerManagement;
 using ARWindow.ImageCapture;
+using ARWindow.Configuration.WindowConfigurationManagement;
+using Injecter;
 
 namespace ARWindow.ImageProcessing
 {
     public class UltraFaceDetection : IFaceDataProvider
     {
+        [Inject] private WindowConfiguration window;
         [SerializeField] private IImageCapture _imageCapture;
         [SerializeField] private float _confidenceThreshold = 0.7f;
+        private const float z_dist = 5.0f; //Placeholder until we get actual depth data
         private UltraFace _ultra;
         private static readonly string BIN_PATH = @"Assets/Resources/RFB-320.bin";
         private static readonly string PARAM_PATH = @"Assets/Resources/RFB-320.param";
 
         private RectangleF _detectedFace;
+        private Vector3 _facePosition = new Vector3(0, 0, z_dist);
 
-        public override Vector3 GetFacePosition()
-        {
-            return new Vector3(0, 0, 5); //TODO
-        }
-
+        public override Vector3 GetFacePosition() => _facePosition;
         public override Rectangle GetFaceRect() => Rectangle.Round(_detectedFace);
 
         private void Awake()
@@ -56,6 +57,7 @@ namespace ARWindow.ImageProcessing
                 }
 
                 _detectedFace = faces.OrderByDescending(f => f.confidence).First().rect;
+                _facePosition = RemapToCameraCoords(GetRectCenter(_detectedFace), img.Size);
             }
         }
 
@@ -76,17 +78,19 @@ namespace ARWindow.ImageProcessing
             return faces;
         }
 
-
-        public struct DetectedFace
+        private static PointF GetRectCenter(RectangleF rect)
         {
-            public float confidence;
-            public RectangleF rect;
+            return new PointF(rect.Left + rect.Width / 2.0f,
+                             rect.Top + rect.Height / 2.0f);
+        }
 
-            public DetectedFace(float confidence, RectangleF rect)
-            {
-                this.confidence = confidence;
-                this.rect = rect;
-            }
+        private Vector3 RemapToCameraCoords(PointF point, Size imageSize)
+        {
+            var cameraCoords = new Vector3(0, 0, z_dist);
+            cameraCoords.x = window.Width * ((point.X / imageSize.Width) - 0.5f);
+            cameraCoords.y = -1.0f * window.Height * ((point.Y / imageSize.Height) - 0.5f);
+
+            return cameraCoords;
         }
     }
 }
