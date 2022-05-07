@@ -13,7 +13,9 @@ namespace ARWindow.ImageProcessing
     {
         #region Properties and private fields
         [Inject] private WindowConfiguration window;
-        [SerializeField] private IImageCapture imageCapture;
+        [SerializeField, InterfaceType(typeof(IImageCapture))] private MonoBehaviour imageCapture;
+
+        private IImageCapture ImageCapture => imageCapture as IImageCapture;
 
         private static readonly string CASCADE_PATH = @"Assets/Resources/haarcascade_frontalface_default.xml";
 
@@ -41,7 +43,7 @@ namespace ARWindow.ImageProcessing
         {
             if (cc == null) return;
 
-            using (Image<Bgr, byte> img = imageCapture.ImageFrame)
+            using (Image<Bgr, byte> img = ImageCapture.ImageFrame)
             {
                 if (img == null) return;
 
