@@ -9,7 +9,7 @@ using Injecter;
 
 namespace ARWindow.ImageProcessing
 {
-    public class CascadeFaceDetection : IFaceDataProvider
+    public class CascadeFaceDetection : MonoBehaviour, IFaceDataProvider
     {
         #region Properties and private fields
         [Inject] private WindowConfiguration window;
@@ -26,8 +26,8 @@ namespace ARWindow.ImageProcessing
         private Rectangle detectedFace;
         #endregion
 
-        public override Vector3 GetFacePosition() => faceRectCenter != default ? FacePos : new Vector3(0,0,5);
-        public override Rectangle GetFaceRect() => detectedFace;
+        public Vector3 GetFacePosition() => faceRectCenter != default ? FacePos : new Vector3(0,0,5);
+        public Rectangle GetFaceRect() => detectedFace;
 
 
         // OnEnable is called just after the object is enabled
