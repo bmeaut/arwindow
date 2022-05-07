@@ -1,6 +1,6 @@
 {
     "name": "ArWindow",
-    "references": ["ArWindow.Nuget"],
+    "references": ["ArWindow.Nuget", "Injecter.Unity"],
     "includePlatforms": [],
     "excludePlatforms": [],
     "allowUnsafeCode": true,

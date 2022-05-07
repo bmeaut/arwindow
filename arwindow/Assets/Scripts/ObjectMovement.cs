@@ -1,8 +1,9 @@
-﻿using Configuration.WindowConfigurationManagement;
+﻿using ARWindow.Configuration.WindowConfigurationManagement;
+using Injecter;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
-namespace ARObjects
+namespace ARWindow.ARObjects
 {
     public class ObjectMovement : MonoBehaviour
     {
@@ -20,15 +21,16 @@ namespace ARObjects
         public float maxRotationDegrees = 30f;
         public float rotationSpeed = 1f;
 
+        [Inject] private readonly WindowConfiguration windowConfiguration;
+
         // Start is called before the first frame update
         void Start()
         {
             rb = GetComponent<Rigidbody>();
-            var window = FindObjectOfType<WindowConfiguration>();
 
             startPos = transform.position;
-            float windowWidth = window.Width;
-            float windowHeight = window.Height;
+            float windowWidth = windowConfiguration.Width;
+            float windowHeight = windowConfiguration.Height;
             boundsX = new Vector2(startPos.x - windowWidth, startPos.x + windowWidth);
             boundsY = new Vector2(startPos.y - windowHeight, startPos.y + windowHeight);
             boundsZ = new Vector2(startPos.z - 10, startPos.z + 10);
