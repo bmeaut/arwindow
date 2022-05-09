@@ -12,21 +12,22 @@ using Injecter;
 
 namespace ARWindow.ImageProcessing
 {
-    public class UltraFaceDetection : IFaceDataProvider
+    public class UltraFaceDetection : MonoBehaviour, IFaceDataProvider
     {
         [Inject] private WindowConfiguration window;
-        [SerializeField] private IImageCapture _imageCapture;
+        [SerializeField, InterfaceType(typeof(IImageCapture))] private MonoBehaviour _imageCapture;
         [SerializeField] private float _confidenceThreshold = 0.7f;
         private const float z_dist = 5.0f; //Placeholder until we get actual depth data
         private UltraFace _ultra;
         private static readonly string BIN_PATH = @"Assets/Resources/RFB-320.bin";
         private static readonly string PARAM_PATH = @"Assets/Resources/RFB-320.param";
+        private IImageCapture ImageCapture => _imageCapture as IImageCapture;
 
         private RectangleF _detectedFace;
         private Vector3 _facePosition = new Vector3(0, 0, z_dist);
 
-        public override Vector3 GetFacePosition() => _facePosition;
-        public override Rectangle GetFaceRect() => Rectangle.Round(_detectedFace);
+        public Vector3 GetFacePosition() => _facePosition;
+        public Rectangle GetFaceRect() => Rectangle.Round(_detectedFace);
 
         private void Awake()
         {
@@ -44,7 +45,7 @@ namespace ARWindow.ImageProcessing
         // Update is called once per frame
         void Update()
         {
-            using (Image<Bgr, byte> img = _imageCapture.ImageFrame?.Clone())
+            using (Image<Bgr, byte> img = ImageCapture.ImageFrame?.Clone())
             {
                 if (img == null) return;
 
