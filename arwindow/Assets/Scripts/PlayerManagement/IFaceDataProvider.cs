@@ -3,9 +3,9 @@ using UnityEngine;
 
 namespace ARWindow.PlayerManagement
 {
-    public abstract class IFaceDataProvider : MonoBehaviour
+    public interface IFaceDataProvider
     {
-        public abstract Vector3 GetFacePosition();
-        public abstract Rectangle GetFaceRect();
+        Vector3 GetFacePosition();
+        Rectangle GetFaceRect();
     }
 }

@@ -10,9 +10,13 @@ namespace ARWindow.UI.Debug
 {
     public class FaceDetectionDebugImage : MonoBehaviour
     {
-        [SerializeField] private IImageCapture imageCapture;
-        [SerializeField] private IFaceDataProvider faceDetection;
+        [SerializeField, InterfaceType(typeof(IImageCapture))] private MonoBehaviour imageCapture;
+        [SerializeField, InterfaceType(typeof(IFaceDataProvider))] private MonoBehaviour faceDetection;
         [SerializeField] private RawImage imageBox;
+
+        private IFaceDataProvider FaceDetection => faceDetection as IFaceDataProvider;
+        private IImageCapture ImageCapture => imageCapture as IImageCapture;
+
         //debug texture to display detected face rects in the corner
         Texture2D texture;
 
@@ -25,12 +29,12 @@ namespace ARWindow.UI.Debug
         void Update()
         {
 
-            using (Image<Bgr, byte> img = imageCapture.ImageFrame?.Clone())
+            using (Image<Bgr, byte> img = ImageCapture.ImageFrame?.Clone())
             {
                 if (img == null) return;
 
-                if (faceDetection.GetFaceRect() != default)
-                    DrawFaceMarkers(img, faceDetection.GetFaceRect());
+                if (FaceDetection.GetFaceRect() != default)
+                    DrawFaceMarkers(img, FaceDetection.GetFaceRect());
 
                 if (texture is null)
                     texture = new Texture2D(img.Width, img.Height);

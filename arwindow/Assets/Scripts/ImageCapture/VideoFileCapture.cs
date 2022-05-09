@@ -6,7 +6,7 @@ using UnityEngine;
 
 namespace ARWindow.ImageCapture
 {
-    public class VideoFileCapture : IImageCapture
+    public class VideoFileCapture : MonoBehaviour, IImageCapture
     {
         private const string CONFIG_PATH = "Assets/Config/LocalSettings.json";
         private string videoPath = "";
@@ -14,7 +14,7 @@ namespace ARWindow.ImageCapture
         private int videoFrameCount; //Number of frames in video file
         private int videoCaptureFps;
 
-        public override Image<Bgr, byte> ImageFrame => _imgFrame;
+        public Image<Bgr, byte> ImageFrame => _imgFrame;
         private Image<Bgr, byte> _imgFrame;
 
         private void Awake()

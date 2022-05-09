@@ -7,11 +7,13 @@ namespace ARWindow.Core
 {
     public class Core : MonoBehaviour
     {
-        [SerializeField] private IFaceDataProvider faceDataProvider;
+        [SerializeField, InterfaceType(typeof(IFaceDataProvider))] private MonoBehaviour faceDataProvider;
         [SerializeField] private Camera renderCamera;
         [SerializeField] private Transform windowCenter;
 
         [Inject] private readonly WindowConfiguration windowConfiguration;
+
+        private IFaceDataProvider FaceDataProvider => faceDataProvider as IFaceDataProvider;
 
         private void Start()
         {
@@ -20,7 +22,7 @@ namespace ARWindow.Core
 
         private void Update()
         {
-            var eyePosition = faceDataProvider.GetFacePosition();
+            var eyePosition = FaceDataProvider.GetFacePosition();
             var centre = windowCenter.position;
 
             renderCamera.transform.position = centre + eyePosition;

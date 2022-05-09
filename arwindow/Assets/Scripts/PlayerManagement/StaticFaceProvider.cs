@@ -3,11 +3,11 @@ using UnityEngine;
 
 namespace ARWindow.PlayerManagement
 {
-    public class StaticFaceProvider : IFaceDataProvider
+    public class StaticFaceProvider : MonoBehaviour, IFaceDataProvider
     {
-        public override Vector3 GetFacePosition() => transform.position;
+        public Vector3 GetFacePosition() => transform.position;
 
-        public override Rectangle GetFaceRect() => default;
+        public Rectangle GetFaceRect() => default;
     }
 }
 
