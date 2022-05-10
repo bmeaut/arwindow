@@ -21,7 +21,7 @@ public class KinectFaceDetection : IFaceDataProvider
 
     private Vector3 HeadPosition;
 
-    FaceFrameSource _faceSource;
+    HighDefinitionFaceFrameSource _faceSource;
 
     public override Vector3 GetFacePosition() => HeadPosition;
     public override Rectangle GetFaceRect() => GetDriverFaceRect(HeadPosition);
@@ -47,14 +47,7 @@ public class KinectFaceDetection : IFaceDataProvider
         MultiSourceFrameReader.MultiSourceFrameArrived += OnMultiFrameArrived;
 
         // elcrashel az editor, nem igy kellene hasznalni
-        _faceSource = FaceFrameSource.Create(KinectSensor, 0, FaceFrameFeatures.BoundingBoxInColorSpace |
-                                              FaceFrameFeatures.FaceEngagement |
-                                              FaceFrameFeatures.Glasses |
-                                              FaceFrameFeatures.Happy |
-                                              FaceFrameFeatures.LeftEyeClosed |
-                                              FaceFrameFeatures.MouthOpen |
-                                              FaceFrameFeatures.PointsInColorSpace |
-                                              FaceFrameFeatures.RightEyeClosed);
+        _faceSource = HighDefinitionFaceFrameSource.Create(KinectSensor);
         _faceSource.OpenReader();
 
         bodyCount = KinectSensor.BodyFrameSource.BodyCount;
