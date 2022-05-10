@@ -5,6 +5,7 @@ using UnityEngine;
 using Windows.Kinect;
 using System.Threading;
 using System;
+using Microsoft.Kinect.Face;
 
 public class KinectFaceDetection : IFaceDataProvider
 {
@@ -19,6 +20,8 @@ public class KinectFaceDetection : IFaceDataProvider
     private List<CameraSpacePoint> headPositionsJoint = new List<CameraSpacePoint>();
 
     private Vector3 HeadPosition;
+
+    FaceFrameSource _faceSource;
 
     public override Vector3 GetFacePosition() => HeadPosition;
     public override Rectangle GetFaceRect() => GetDriverFaceRect(HeadPosition);
@@ -42,6 +45,18 @@ public class KinectFaceDetection : IFaceDataProvider
         FrameSourceTypes frameSourceTypes = FrameSourceTypes.Body;
         MultiSourceFrameReader = KinectSensor.OpenMultiSourceFrameReader(frameSourceTypes);
         MultiSourceFrameReader.MultiSourceFrameArrived += OnMultiFrameArrived;
+        
+        // elcrashel az editor, nem igy kellene hasznalni
+        /*_faceSource = new FaceFrameSource(KinectSensor._pNative);
+        _faceSource.FaceFrameFeatures = FaceFrameFeatures.BoundingBoxInColorSpace |
+                                              FaceFrameFeatures.FaceEngagement |
+                                              FaceFrameFeatures.Glasses |
+                                              FaceFrameFeatures.Happy |
+                                              FaceFrameFeatures.LeftEyeClosed |
+                                              FaceFrameFeatures.MouthOpen |
+                                              FaceFrameFeatures.PointsInColorSpace |
+                                              FaceFrameFeatures.RightEyeClosed;
+        _faceSource.OpenReader();*/
 
         bodyCount = KinectSensor.BodyFrameSource.BodyCount;
         bodies = new Body[bodyCount];
