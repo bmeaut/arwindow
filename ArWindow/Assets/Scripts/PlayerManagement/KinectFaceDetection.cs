@@ -3,25 +3,24 @@ using System.Collections.Generic;
 using System.Drawing;
 using UnityEngine;
 using Windows.Kinect;
-using System.Threading;
 using System;
 using Microsoft.Kinect.Face;
+using System.Linq;
 
 public class KinectFaceDetection : IFaceDataProvider
 {
     private KinectSensor KinectSensor { get; set; }
-    private MultiSourceFrameReader MultiSourceFrameReader { get; set; }
-    private int bodyCount;
-    private Body[] bodies = null;
-
-    private AutoResetEvent dataAvailableEvent = new AutoResetEvent(false);
-    private volatile bool processingData = false;
-
-    private List<CameraSpacePoint> headPositionsJoint = new List<CameraSpacePoint>();
+    private BodyFrameSource _bodySource;
+    private BodyFrameReader _bodyReader;
+    private HighDefinitionFaceFrameSource _faceSource;
+    private HighDefinitionFaceFrameReader _faceReader;
+    private FaceAlignment _faceAlignment;
+    private FaceModel _faceModel;
 
     private Vector3 HeadPosition;
 
-    HighDefinitionFaceFrameSource _faceSource;
+    public GameObject _vertexPrefab;
+    private List<GameObject> _facePoints = new List<GameObject>();
 
     public override Vector3 GetFacePosition() => HeadPosition;
     public override Rectangle GetFaceRect() => GetDriverFaceRect(HeadPosition);
@@ -32,85 +31,85 @@ public class KinectFaceDetection : IFaceDataProvider
         InitKinect();
     }
 
-    // Update is called once per frame
-    void Update()
-    {
-
-    }
-
     private void InitKinect()
     {
         KinectSensor = KinectSensor.GetDefault();
 
-        FrameSourceTypes frameSourceTypes = FrameSourceTypes.Body;
-        MultiSourceFrameReader = KinectSensor.OpenMultiSourceFrameReader(frameSourceTypes);
-        MultiSourceFrameReader.MultiSourceFrameArrived += OnMultiFrameArrived;
+        if (KinectSensor == null)
+        {
+            Debug.LogError("Kinect Sensor not found.");
+            return;
+        }
 
-        // elcrashel az editor, nem igy kellene hasznalni
+        _bodySource = KinectSensor.BodyFrameSource;
+        _bodyReader = _bodySource.OpenReader();
+        _bodyReader.FrameArrived += BodyReader_FrameArrived;
         _faceSource = HighDefinitionFaceFrameSource.Create(KinectSensor);
-        _faceSource.OpenReader();
+        _faceReader = _faceSource.OpenReader();
+        _faceReader.FrameArrived += FaceReader_FrameArrived;
+        _faceAlignment = FaceAlignment.Create();
+        _faceModel = FaceModel.Create();
 
-        bodyCount = KinectSensor.BodyFrameSource.BodyCount;
-        bodies = new Body[bodyCount];
         KinectSensor.Open();
     }
 
-    private Vector3? GetBestDriverHeadPositionInWindshieldCentered(List<CameraSpacePoint> points)
+    private void BodyReader_FrameArrived(object sender, BodyFrameArrivedEventArgs e)
     {
-        double maximalHeight = double.MinValue;
-        Vector3? closestHeadPosition = null;
-
-        foreach (var p in points)
+        if (!_faceSource.IsTrackingIdValid)
         {
-            Vector3 headPositionInKinectCoordinates = ConvertCameraSpacePointToVector3D(p);
-
-            // TODO: egyelore ay elsot valasztjuk ki
-            closestHeadPosition = headPositionInKinectCoordinates;
-            break;
-
-            //Vector3 headPosition = environment.TransformKinectCoordinatesToWindshieldCenteredCoordinates(headPositionInKinectCoordinates);
-
-            //var height = environment.GetDriverPosHeightMapValue(headPosition.X, headPosition.Y, headPosition.Z);
-            //if (height > maximalHeight)
-            //{
-            //    maximalHeight = height;
-            //    closestHeadPosition = headPosition;
-            //    driverPosition = headPositionInKinectCoordinates;
-            //}
-        }
-        return closestHeadPosition;
-    }
-
-    private void OnMultiFrameArrived(object sender, MultiSourceFrameArrivedEventArgs e)
-    {
-        bool dataAvailable = false;
-        MultiSourceFrame msf = e.FrameReference.AcquireFrame();
-        if (msf != null) using (BodyFrame bodyFrame = msf.BodyFrameReference.AcquireFrame())
-        {
-            if (bodyFrame != null)
+            using (var frame = e.FrameReference.AcquireFrame())
             {
-                headPositionsJoint.Clear();
-                bodyFrame.GetAndRefreshBodyData(bodies);
-                foreach (var body in bodies)
+                if (frame != null)
                 {
-                    if (body.IsTracked)
+                    Body[] bodies = new Body[frame.BodyCount];
+                    frame.GetAndRefreshBodyData(bodies);
+
+                    Body body = bodies.Where(b => b.IsTracked).FirstOrDefault();
+
+                    if (body != null)
                     {
-                        headPositionsJoint.Add(body.Joints[JointType.Head].Position);
+                        _faceSource.TrackingId = body.TrackingId;
                     }
                 }
-                dataAvailable = true;
-            }
-
-            if (dataAvailable)
-            {
-                Vector3? headPosition = GetBestDriverHeadPositionInWindshieldCentered(headPositionsJoint);
-
-                if (headPosition.HasValue)
-                {
-                    HeadPosition = headPosition.Value;
-                }
             }
         }
+    }
+
+    private void FaceReader_FrameArrived(object sender, HighDefinitionFaceFrameArrivedEventArgs e)
+    {
+        using (var frame = e.FrameReference.AcquireFrame())
+        {
+            if (frame != null && frame.IsFaceTracked)
+            {
+                frame.GetAndRefreshFaceAlignmentResult(_faceAlignment);
+                UpdateFacePoints();
+            }
+        }
+    }
+
+    private void UpdateFacePoints()
+    {
+        var vertices = _faceModel.CalculateVerticesForAlignment(_faceAlignment);
+        if (vertices.Count == 0) return;
+
+        //ideiglenes, csak tesztelésre
+        //vertex pontok megjelenítése térben
+        if (_facePoints.Count == 0)
+        {
+            var parent = new GameObject();
+            for (int i = 0; i < vertices.Count; i++)
+            {
+                var v = GameObject.Instantiate(_vertexPrefab, parent.transform);
+                _facePoints.Add(v);
+            }
+        }
+        for (int i = 0; i < vertices.Count; i++)
+        {
+            CameraSpacePoint vertex = vertices[i];
+            _facePoints[i].transform.position = new Vector3(vertex.X, vertex.Y, vertex.Z);
+        }
+
+        HeadPosition = ConvertCameraSpacePointToVector3D(vertices[(int)HighDetailFacePoints.NoseTop]);
     }
 
     private Vector3 ConvertCameraSpacePointToVector3D(CameraSpacePoint cameraSpacePoint)
@@ -149,7 +148,7 @@ public class KinectFaceDetection : IFaceDataProvider
 
         var xHead = centerx + (int)Math.Round(driverPosition.x * xScale);
         var yHead = centery - (int)Math.Round(driverPosition.z * yScale);
-        
+
         int xRect = xHead - xOffset;
         int yRect = yHead - yOffset;
         xRect = Math.Max(Math.Min(xRect, 1920), 0);
@@ -166,7 +165,7 @@ public class KinectFaceDetection : IFaceDataProvider
 
         if (width < 100 || height < 100)
         {
-            return new Rectangle(xRect, yRect, width, height); // TODO: ey eredetileg null volt, nem tom miert
+            return new Rectangle(xRect, yRect, width, height); // TODO: ez eredetileg null volt, nem tom miert
         }
 
         return new Rectangle(xRect, yRect, width, height);
