@@ -23,23 +23,73 @@ namespace ARWindow.Core
         private void Update()
         {
             var eyePosition = FaceDataProvider.GetFacePosition();
-            var centre = windowCenter.position;
 
-            renderCamera.transform.position = centre + eyePosition;
+            float windowLeft = -windowConfiguration.Width / 2.0f;
+            float windowRight = windowConfiguration.Width / 2.0f;
+            float windowTop = windowConfiguration.Height / 2.0f;
+            float windowBottom = -windowConfiguration.Height / 2.0f;
+
+            // levetitett frustrum merete, nearPlane legyen a leheto legnagyobb, farPlane a leheto legkisebb!
+            float nearPlane = 0.3f;
+            float farPlane = 1000.0f;
+
+            //screen corners, origo is window center
+            Vector3 pa = new Vector3(windowLeft, windowBottom, 0.0f);
+            Vector3 pb = new Vector3(windowRight, windowBottom, 0.0f);
+            Vector3 pc = new Vector3(windowLeft, windowTop, 0.0f);
+
+            //orthonormal basis for the screen
+            Vector3 vr = Vector3.Normalize(pb - pa); //right
+            Vector3 vu = Vector3.Normalize(pc - pa); //up
+            Vector3 vn = Vector3.Normalize(Vector3.Cross(vr, vu)); //screen normal
+
+            //screen corner vectors (from eye to corners)
+            Vector3 va = pa - eyePosition;
+            Vector3 vb = pb - eyePosition;
+            Vector3 vc = pc - eyePosition;
+
+            //distance from eye to screen-space origin
+            float d = -Vector3.Dot(vn, va); //assert d is positive
+
+            float left = Vector3.Dot(vr, va) * nearPlane / d;
+            float right = Vector3.Dot(vr, vb) * nearPlane / d;
+            float bottom = Vector3.Dot(vu, va) * nearPlane / d;
+            float top = Vector3.Dot(vu, vc) * nearPlane / d;
+
+            // TODO: test, masik projektben ezt hasznaltuk de ez most nincs: Matrix4x4.CreatePerspectiveOffCenter(left, right, bottom, top, nearPlane, farPlane)
+            var P = PerspectiveOffCenter(left, right, bottom, top, nearPlane, farPlane);
+            var viewMatrix = Matrix4x4.LookAt(eyePosition, eyePosition - vn, vu); // mintha a user merőlegesen nézne a screenre
+
+            renderCamera.transform.position = windowCenter.position + eyePosition;
             renderCamera.transform.LookAt(windowCenter);
+            //renderCamera.worldToCameraMatrix = viewMatrix; // TODO: eyyel valamiert nem mukodott
+            renderCamera.projectionMatrix = P;//eredeti: P*M*T
+        }
 
-            var left = centre;
-            left.x -= windowConfiguration.Width / 2f;
-            var right = centre;
-            right.x += windowConfiguration.Width / 2f;
+        //left-handed, not right-handed as wpf but unity uses left so i guess its good :)
+        /// <summary>
+        /// Set an off-center projection, where perspective's vanishing
+        /// point is not necessarily in the center of the screen.
+        /// left/right/top/bottom define near plane size, i.e.
+        /// how offset are corners of camera's near plane.
+        /// Tweak the values and you can see camera's frustum change.
+        /// </summary>
+        Matrix4x4 PerspectiveOffCenter(float left, float right, float bottom, float top, float near, float far)
+        {
+            float x = (2.0f * near) / (right - left);
+            float y = (2.0f * near) / (top - bottom);
+            float a = (right + left) / (right - left);
+            float b = (top + bottom) / (top - bottom);
+            float c = -(far + near) / (far - near);
+            float d = -(2.0f * far * near) / (far - near);
+            float e = -1.0f;
 
-            var vleft = (left - eyePosition).normalized;
-            var vright = (right - eyePosition).normalized;
-
-            Debug.DrawRay(eyePosition, vleft * 1000, Color.green);
-            Debug.DrawRay(eyePosition, vright * 1000, Color.blue);
-
-            renderCamera.fieldOfView = Vector3.Angle(vleft, vright);
+            Matrix4x4 m = new Matrix4x4();
+            m.m00 = x; m.m01 = 0; m.m02 = a; m.m03 = 0;
+            m.m10 = 0; m.m11 = y; m.m12 = b; m.m13 = 0;
+            m.m20 = 0; m.m21 = 0; m.m22 = c; m.m23 = d;
+            m.m30 = 0; m.m31 = 0; m.m32 = e; m.m33 = 0;
+            return m;
         }
     }
 }
