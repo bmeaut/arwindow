@@ -4,8 +4,8 @@ using Emgu.CV.Structure;
 
 namespace ARWindow.ImageCapture
 {
-    public abstract class IImageCapture : MonoBehaviour
+    public interface IImageCapture
     {
-        public abstract Image<Bgr, byte> ImageFrame { get; }
+        Image<Bgr, byte> ImageFrame { get; }
     }
 }

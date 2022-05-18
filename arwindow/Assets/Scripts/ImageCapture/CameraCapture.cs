@@ -1,16 +1,17 @@
 using ARWindow.Serialization;
 using Emgu.CV;
 using Emgu.CV.Structure;
+using UnityEngine;
 
 namespace ARWindow.ImageCapture
 {
-    public class CameraCapture : IImageCapture
+    public class CameraCapture : MonoBehaviour, IImageCapture
     {
         private const string CONFIG_PATH = "Assets/Config/LocalSettings.json";
         private int cameraId = 1;
         private VideoCapture capture;
 
-        public override Image<Bgr, byte> ImageFrame => capture?.QueryFrame().ToImage<Bgr, byte>();
+        public Image<Bgr, byte> ImageFrame => capture?.QueryFrame().ToImage<Bgr, byte>();
 
         private void Awake()
         {

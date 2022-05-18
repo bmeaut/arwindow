@@ -5,7 +5,7 @@ using ARWindow.Serialization;
 
 namespace ARWindow.Configuration.WindowConfigurationManagement
 {
-    public class WindowConfiguration : MonoBehaviour
+    public class WindowConfiguration
     {
         private const string WINDOW_CONFIG_PATH = "Assets/Config/WindowConfiguration.json";
 
@@ -16,6 +16,11 @@ namespace ARWindow.Configuration.WindowConfigurationManagement
         [JsonProperty] private float playerCameraXPos = 0;
         [JsonProperty] private float playerCameraYPos = 5;
         private float targetCameraAngleInDegree, targetCameraYPos, targetCameraXPos;
+
+        public WindowConfiguration()
+        {
+            UpdateConfiguration();
+        }
 
         public Vector3 PlayerCameraPointToWindowCenteredPoint(Vector3 point)
         {
@@ -51,11 +56,6 @@ namespace ARWindow.Configuration.WindowConfigurationManagement
             };
         }
 
-        void Awake()
-        {
-            UpdateConfiguration();
-        }
-
         private void UpdateConfiguration()
         {
             var config = ConfigSerializer.ReadJsonFile(WINDOW_CONFIG_PATH);
@@ -65,12 +65,6 @@ namespace ARWindow.Configuration.WindowConfigurationManagement
             playerCameraYPos = config.Value<float>("playerCameraYPos");
             Width = config.Value<float>("Width");
             Height = config.Value<float>("Height");
-        }
-
-        void OnDrawGizmos()
-        {
-            // Visualize window borders in Unity editor
-            Gizmos.DrawWireCube(transform.position, new Vector3(Width, Height, 0.01f));
         }
     }
 }
