@@ -7,8 +7,8 @@ using System.Threading;
 using System;
 using Microsoft.Kinect.Face;
 
-public class KinectFaceDetection : IFaceDataProvider
-{
+public class KinectFaceDetection : MonoBehaviour, IFaceDataProvider
+{ 
     private KinectSensor KinectSensor { get; set; }
     private MultiSourceFrameReader MultiSourceFrameReader { get; set; }
     private int bodyCount;
@@ -23,8 +23,8 @@ public class KinectFaceDetection : IFaceDataProvider
 
     HighDefinitionFaceFrameSource _faceSource;
 
-    public override Vector3 GetFacePosition() => HeadPosition;
-    public override Rectangle GetFaceRect() => GetDriverFaceRect(HeadPosition);
+    public Vector3 GetFacePosition() => HeadPosition;
+    public Rectangle GetFaceRect() => GetDriverFaceRect(HeadPosition);
 
     // Start is called before the first frame update
     void Start()
