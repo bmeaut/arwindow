@@ -1,5 +1,4 @@
 ﻿using UnityEngine;
-using System.Collections;
 using Injecter.Unity;
 using System;
 using Microsoft.Extensions.DependencyInjection;
@@ -31,11 +30,10 @@ public sealed class Bootstrapper : InjectStarter
         // Use the usual IServiceCollection methods
         //TODO: Add services here
         //services.AddTransient<IExampleService, ExampleService>();
-        //services.AddSingleton<WindowConfiguration>();
+        services.AddSingleton<WindowConfiguration>();
 
         // Resolve scripts already in the scene with FindObjectOfType()
         //TODO: Add services here
-        services.AddSingleton(_ => FindObjectOfType<WindowConfiguration>());
         services.AddSingleton(_ => FindObjectOfType<Core>());
         services.AddSingleton(_ => FindObjectOfType<CascadeFaceDetection>());
 
