@@ -597,10 +597,10 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1454072653}
-  - component: {fileID: 1454072655}
   - component: {fileID: 1454072652}
   - component: {fileID: 1454072654}
   - component: {fileID: 1454072651}
+  - component: {fileID: 1454072655}
   m_Layer: 0
   m_Name: Moustache
   m_TagString: Untagged
