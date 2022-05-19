@@ -1,4 +1,8 @@
-﻿# ARWindow
+# ARWindow
+
+Az ARWindow projekt célja egy passzív fényáteresztéssel működő átlátszó kijelző képességeinek bemutatása egy Augmented Reality alkalmazás keretein belül. Az alkalmazás egyidejűleg két felhasználót kezel, akik a kijelző két oldalán állnak. A két személy egyike lesz a megfigyelő, míg a másik az alany. Az ARWindow egyfajta realtime kép filter effektként működik, az alanyra AR objektumokat vetít a megfigyelő nézőpontjából.
+
+Ahhoz, hogy ez működhessen, mindkét szereplő fejpozícióját követni kell, és ha valamelyik elmozdul, a megjelenített objektumot is mozgatni kell ahhoz, hogy betekintési szögtől függetlenül a néző mindig a korrekt helyen lássa a virtuális kiegészítőt. Ennek érdekében két eszközt használunk. Az első egy Kinect szenzor, amely az alanyt követi, és arcfelismerés mellett távolságot is tud mérni, valamint precíz információt nyújt az arc jellegzetes pontjainak helyzetéről is. A másik egy mélységképpel rendelkező kamera, amely a megfigyelőt segít elhelyezni a 3D térben.
 
 ## Beüzemelés
 
@@ -17,4 +21,5 @@
 		"cameraId": 1
 	}
 	```
+	Ez a fájl a fejlesztés során használt egyéni konfigurációkat tartalmazza. A jövőben központosíthatjuk vagy ki is törölhetjük, ha már nem lesz szükség a benne található paraméterekre.
 10. Nyissuk meg a főjelenetet (`Assets/Scenes/SampleScene`), ami már futtatásra kész.
