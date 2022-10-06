@@ -6,11 +6,15 @@ using Windows.Kinect;
 using System;
 using Microsoft.Kinect.Face;
 using System.Linq;
+using ARWindow.Configuration.WindowConfigurationManagement;
+using Injecter;
 
 namespace ARWindow.ImageProcessing
 {
     public class KinectFaceDetection : MonoBehaviour, IFaceDataProvider
     {
+        [Inject] private readonly WindowConfiguration _windowConfiguration;
+
         private KinectSensor KinectSensor { get; set; }
         private BodyFrameSource _bodySource;
         private BodyFrameReader _bodyReader;
@@ -111,7 +115,8 @@ namespace ARWindow.ImageProcessing
                 _facePoints[i].transform.position = new Vector3(vertex.X, vertex.Y, vertex.Z);
             }
 
-            HeadPosition = ConvertCameraSpacePointToVector3D(vertices[(int)HighDetailFacePoints.NoseTop]);
+            HeadPosition = _windowConfiguration.PlayerCameraPointToWindowCenteredPoint(
+                ConvertCameraSpacePointToVector3D(vertices[(int)HighDetailFacePoints.NoseTop]));
         }
 
         private Vector3 ConvertCameraSpacePointToVector3D(CameraSpacePoint cameraSpacePoint)
