@@ -33,7 +33,9 @@ namespace ARWindow.Configuration.WindowConfigurationManagement
 
             return new Vector3
             {
-                x = point.x + playerCameraXPos,
+                //TODO: Confirm, that X should be negative because unity coord system differs from the kinect one?
+                //In testing, positive x mirrors the camera, which is not what we want
+                x = (-1) * point.x + playerCameraXPos,
                 y = (float)(d + e),
                 z = (float)(a + b)
             };

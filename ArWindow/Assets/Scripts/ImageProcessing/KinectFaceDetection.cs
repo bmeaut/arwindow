@@ -98,8 +98,13 @@ namespace ARWindow.ImageProcessing
             var vertices = _faceModel.CalculateVerticesForAlignment(_faceAlignment);
             if (vertices.Count == 0) return;
 
+            HeadPosition = _windowConfiguration.PlayerCameraPointToWindowCenteredPoint(
+                ConvertCameraSpacePointToVector3D(vertices[(int)HighDetailFacePoints.NoseTop]));
+
             //ideiglenes, csak tesztelésre
             //vertex pontok megjelenítése térben
+            //TODO: Delete this, if we don't need it. From testing, this looks very good.
+            /*
             if (_facePoints.Count == 0)
             {
                 var parent = new GameObject();
@@ -114,9 +119,7 @@ namespace ARWindow.ImageProcessing
                 CameraSpacePoint vertex = vertices[i];
                 _facePoints[i].transform.position = new Vector3(vertex.X, vertex.Y, vertex.Z);
             }
-
-            HeadPosition = _windowConfiguration.PlayerCameraPointToWindowCenteredPoint(
-                ConvertCameraSpacePointToVector3D(vertices[(int)HighDetailFacePoints.NoseTop]));
+            */
         }
 
         private Vector3 ConvertCameraSpacePointToVector3D(CameraSpacePoint cameraSpacePoint)
