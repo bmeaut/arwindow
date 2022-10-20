@@ -23,7 +23,7 @@ namespace ARWindow.ImageProcessing
         private FaceAlignment _faceAlignment;
         private FaceModel _faceModel;
 
-        private Vector3 HeadPosition;
+        private Vector3 HeadPosition = Vector3.zero;
 
         public GameObject _vertexPrefab;
         private List<GameObject> _facePoints = new List<GameObject>();
@@ -122,6 +122,8 @@ namespace ARWindow.ImageProcessing
             */
         }
 
+        //This functions also multiply the coords with 100, so we measure the things centimeters
+        //and not in meters (as the kinect SDK does)
         private Vector3 ConvertCameraSpacePointToVector3D(CameraSpacePoint cameraSpacePoint)
         {
             return new Vector3(cameraSpacePoint.X * 100.0f, cameraSpacePoint.Y * 100.0f, cameraSpacePoint.Z * 100.0f);

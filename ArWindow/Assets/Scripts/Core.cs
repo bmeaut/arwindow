@@ -24,6 +24,11 @@ namespace ARWindow.Core
         {
             var eyePosition = FaceDataProvider.GetFacePosition();
 
+            //At the beginning for some milliseconds, unity won't get the kinect capture and gives errors,
+            //so we check, that when eyeposition is zero vector (kinect not initalized).
+            if(eyePosition == Vector3.zero)
+                return;
+
             float windowLeft = -windowConfiguration.Width / 2.0f;
             float windowRight = windowConfiguration.Width / 2.0f;
             float windowTop = windowConfiguration.Height / 2.0f;
