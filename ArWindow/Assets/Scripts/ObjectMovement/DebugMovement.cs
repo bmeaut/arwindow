@@ -5,7 +5,7 @@ using Random = UnityEngine.Random;
 
 namespace ARWindow.ARObjects
 {
-    public class ObjectMovement : MonoBehaviour
+    public class DebugMovement : MonoBehaviour
     {
         public float speed = 1.0f;
         public float triggerDistance = 5f;
@@ -41,7 +41,7 @@ namespace ARWindow.ARObjects
         // Update is called once per frame
         void Update()
         {
-            if(Vector3.Distance(transform.position, destination) <= triggerDistance)
+            if (Vector3.Distance(transform.position, destination) <= triggerDistance)
             {
                 FindNewDestination();
             }
