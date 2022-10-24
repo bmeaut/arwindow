@@ -8,8 +8,11 @@ namespace ARWindow.ARObjects
     public class FaceDetectionMovement : MonoBehaviour
     {
         Rigidbody rb;
-        public float speed = 250.0f;
+
+        [Tooltip("Enables or disables smoothened (kinematic) movement.\nCan result in smoother tracking with an appropriate \"speed\" value, but can cause object to lag behind.")]
         public bool smooth = false;
+        [Tooltip("How fast should the object move towards the detected face.\nOnly used if \"smooth\" is set to true. Values higher than ~300.0 can lead to instability.")]
+        public float speed = 250.0f;
 
         [SerializeField, InterfaceType(typeof(IFaceDataProvider))] private MonoBehaviour faceDataProvider;
         [Inject] private readonly WindowConfiguration windowConfiguration;
@@ -25,9 +28,7 @@ namespace ARWindow.ARObjects
         {
             rb = GetComponent<Rigidbody>();
             focalLengthMm = Camera.main.focalLength;
-
             startPos = transform.position;
-            //rb.interpolation = RigidbodyInterpolation.Interpolate;
         }
 
         // Update is called once per frame
@@ -46,12 +47,10 @@ namespace ARWindow.ARObjects
                 halfheight = windowConfiguration.Height / 2f;
                 destination = new Vector3()
                 {
-                    
                     x = pos.x * (2 * depth + halfwidth) / halfwidth * -1f, //TODO: Why is this (* -1.0) mirroring necessary?
                     y = pos.y * (2 * depth + halfheight) / halfheight,
                     z = depth * -1,
                 };
-
             }
         }
 
@@ -65,8 +64,8 @@ namespace ARWindow.ARObjects
 
         private float EstimateDepth(float screenHeightPx)
         {
-            const float faceHeightMm = 150.0f; // TODO: Get face height from config
-            return (focalLengthMm * faceHeightMm * 0.1f) / screenHeightPx; // TODO: Find out why this has to be multiplied by 0.1 
+            const float faceHeightMm = 150.0f;                              // TODO: Get face height from config
+            return focalLengthMm * faceHeightMm * 0.1f / screenHeightPx;    // TODO: Find out why this has to be multiplied by 0.1 to get realistic values
         }
 
         private void OnDrawGizmosSelected()
@@ -75,8 +74,8 @@ namespace ARWindow.ARObjects
             float mod = 0.2f * -destination.z + 1f;
             var box = new Vector3()
             {
-                x = windowConfiguration.Width * mod,
-                y = windowConfiguration.Height * mod,
+                x = windowConfiguration?.Width * mod ?? 20f,
+                y = windowConfiguration?.Height * mod ?? 10f,
                 z = 0.5f
             };
             Gizmos.DrawWireCube(new Vector3(startPos.x, startPos.y, destination.z), box);
