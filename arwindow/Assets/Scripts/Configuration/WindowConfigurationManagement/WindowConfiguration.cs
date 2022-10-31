@@ -81,7 +81,7 @@ namespace ARWindow.Configuration.WindowConfigurationManagement
 
             playerCameraAngleInDegree = config.Value<float>("playerCameraAngleInDegree");
             playerCameraXPos = config.Value<float>("playerCameraXPos");
-            //playerCameraYPos = config.Value<float>("playerCameraYPos");
+            playerCameraYPos = config.Value<float>("playerCameraYPos");
 
             windowAngleInDegree = config.Value<float>("windowAngleInDegree");
             kinectDistanceWindowTop = config.Value<float>("kinectDistanceWindowTop");
@@ -89,7 +89,7 @@ namespace ARWindow.Configuration.WindowConfigurationManagement
             Width = config.Value<float>("Width");
             Height = config.Value<float>("Height");
 
-            playerCameraYPos = kinectDistanceWindowTop + Height / 2.0f;
+            //playerCameraYPos = kinectDistanceWindowTop + Height / 2.0f;
         }
     }
 }
