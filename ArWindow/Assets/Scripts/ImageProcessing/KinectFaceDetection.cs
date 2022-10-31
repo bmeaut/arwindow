@@ -8,6 +8,7 @@ using Microsoft.Kinect.Face;
 using System.Linq;
 using ARWindow.Configuration.WindowConfigurationManagement;
 using Injecter;
+using Assets.Scripts.Filters;
 
 namespace ARWindow.ImageProcessing
 {
@@ -24,6 +25,9 @@ namespace ARWindow.ImageProcessing
         private FaceModel _faceModel;
 
         private Vector3 HeadPosition = Vector3.zero;
+
+        private KalmanFilter3D filter = new KalmanFilter3D(1, 1, 7, 7, 0, 0);
+        private double KeepStillThreshold = 1.0; // cm, eucledian distance
 
         public GameObject _vertexPrefab;
         private List<GameObject> _facePoints = new List<GameObject>();
@@ -98,8 +102,12 @@ namespace ARWindow.ImageProcessing
             var vertices = _faceModel.CalculateVerticesForAlignment(_faceAlignment);
             if (vertices.Count == 0) return;
 
-            HeadPosition = _windowConfiguration.PlayerCameraPointToWindowCenteredPoint(
+            var headPosition = _windowConfiguration.PlayerCameraPointToWindowCenteredPoint(
                 ConvertCameraSpacePointToVector3D(vertices[(int)HighDetailFacePoints.NoseTop]));
+
+            //Apply kalman-filter if distance is smaller then threshold
+            HeadPosition = headPosition;
+            //HeadPosition = Track(headPosition);
 
             //ideiglenes, csak tesztelésre
             //vertex pontok megjelenítése térben
@@ -120,6 +128,15 @@ namespace ARWindow.ImageProcessing
                 _facePoints[i].transform.position = new Vector3(vertex.X, vertex.Y, vertex.Z);
             }
             */
+        }
+
+        private Vector3 Track(Vector3 headPosition)
+        {
+            if (Vector3.Distance(HeadPosition, headPosition) < KeepStillThreshold)
+            {
+                return HeadPosition;
+            }
+            return filter.Output(headPosition);
         }
 
         //This functions also multiply the coords with 100, so we measure the things centimeters
