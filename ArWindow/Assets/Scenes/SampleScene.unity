@@ -134,9 +134,8 @@ GameObject:
   - component: {fileID: 153785181}
   - component: {fileID: 153785184}
   - component: {fileID: 153785180}
-  - component: {fileID: 153785186}
-  - component: {fileID: 153785185}
   - component: {fileID: 153785183}
+  - component: {fileID: 153785185}
   m_Layer: 0
   m_Name: Core
   m_TagString: Untagged
@@ -156,7 +155,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 30da71364f21586418a72b0d2081693a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  faceDataProvider: {fileID: 153785186}
+  faceDataProvider: {fileID: 153785185}
   renderCamera: {fileID: 729493371}
   windowCenter: {fileID: 369393699}
 --- !u!4 &153785181
@@ -205,26 +204,11 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 153785179}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: acf762ad090b2ed47b5cc56cdd98ae58, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _imageCapture: {fileID: 153785183}
-  _confidenceThreshold: 0.7
---- !u!114 &153785186
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 153785179}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2a051882474c0974d844f05d318d4e7c, type: 3}
+  m_Script: {fileID: 11500000, guid: d744045a96f53734abb17e154eb3ba11, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _vertexPrefab: {fileID: 948032031}
 --- !u!1 &180888034
 GameObject:
   m_ObjectHideFlags: 0
@@ -457,7 +441,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   imageCapture: {fileID: 153785183}
-  faceDetection: {fileID: 153785185}
+  faceDetection: {fileID: 0}
   imageBox: {fileID: 345015746}
 --- !u!1 &369393698
 GameObject:
