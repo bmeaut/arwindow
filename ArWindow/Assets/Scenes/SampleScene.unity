@@ -158,6 +158,7 @@ MonoBehaviour:
   faceDataProvider: {fileID: 153785185}
   renderCamera: {fileID: 729493371}
   windowCenter: {fileID: 369393699}
+  playerCameraYPos: 5
 --- !u!4 &153785181
 Transform:
   m_ObjectHideFlags: 0
@@ -209,6 +210,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d744045a96f53734abb17e154eb3ba11, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  isKalmanFilterOn: 0
+  KeepStillThreshold: 1
 --- !u!1 &180888034
 GameObject:
   m_ObjectHideFlags: 0

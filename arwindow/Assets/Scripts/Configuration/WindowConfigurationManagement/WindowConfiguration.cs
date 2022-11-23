@@ -9,14 +9,16 @@ namespace ARWindow.Configuration.WindowConfigurationManagement
     {
         private const string WINDOW_CONFIG_PATH = "Assets/Config/WindowConfiguration.json";
 
-        public float Width { get; private set; } = 20;
-        public float Height { get; private set; } = 15;
+        //[SerializeField] private bool CalculateplayerCameraYPos = false;
 
-        [JsonProperty] private float playerCameraAngleInDegree = 90;
-        [JsonProperty] private float playerCameraXPos = 0;
-        [JsonProperty] private float playerCameraYPos = 5;
-        [JsonProperty] private float windowAngleInDegree = 0;
-        [JsonProperty] private float kinectDistanceWindowTop = 14;
+        public float Width { get; private set; } = 70.5f;
+        public float Height { get; private set; } = 39.65f;
+
+        [JsonProperty] public float playerCameraAngleInDegree = 90;
+        [JsonProperty] public float playerCameraXPos = 0;
+        [JsonProperty] public float playerCameraYPos = 5;
+        [JsonProperty] public float windowAngleInDegree = 10.5f;
+        [JsonProperty] public float kinectDistanceWindowTop = 14;
         private float targetCameraAngleInDegree, targetCameraYPos, targetCameraXPos;
 
         public WindowConfiguration()
@@ -89,6 +91,7 @@ namespace ARWindow.Configuration.WindowConfigurationManagement
             Width = config.Value<float>("Width");
             Height = config.Value<float>("Height");
 
+            // This should 14 + 40 / 2 = 34
             //playerCameraYPos = kinectDistanceWindowTop + Height / 2.0f;
         }
     }

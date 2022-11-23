@@ -14,6 +14,9 @@ namespace ARWindow.ImageProcessing
 {
     public class KinectFaceDetection : MonoBehaviour, IFaceDataProvider
     {
+        [SerializeField] private bool isKalmanFilterOn = false;
+        [SerializeField] private double KeepStillThreshold = 1.0; // cm, eucledian distance
+
         [Inject] private readonly WindowConfiguration _windowConfiguration;
 
         private KinectSensor KinectSensor { get; set; }
@@ -27,7 +30,6 @@ namespace ARWindow.ImageProcessing
         private Vector3 HeadPosition = Vector3.zero;
 
         private KalmanFilter3D filter = new KalmanFilter3D(1, 1, 7, 7, 0, 0);
-        private double KeepStillThreshold = 1.0; // cm, eucledian distance
 
         public GameObject _vertexPrefab;
         private List<GameObject> _facePoints = new List<GameObject>();
@@ -105,9 +107,10 @@ namespace ARWindow.ImageProcessing
             var headPosition = _windowConfiguration.PlayerCameraPointToWindowCenteredPoint(
                 ConvertCameraSpacePointToVector3D(vertices[(int)HighDetailFacePoints.NoseTop]));
 
-            //Apply kalman-filter if distance is smaller then threshold
-            HeadPosition = headPosition;
-            //HeadPosition = Track(headPosition);
+            // Apply kalman-filter if distance is smaller then threshold
+            if (isKalmanFilterOn)
+                HeadPosition = Track(headPosition);
+            else HeadPosition = headPosition;
 
             //ideiglenes, csak tesztelésre
             //vertex pontok megjelenítése térben

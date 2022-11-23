@@ -20,12 +20,15 @@ namespace Assets.Scripts.ImageProcessing
 {
     public class KinectSkeletonDetection : MonoBehaviour, IFaceDataProvider
     {
+        [SerializeField] private bool isKalmanFilterOn = false;
+        [SerializeField] private double KeepStillThreshold = 1.0; // cm, eucledian distance
+
         [Inject] private readonly WindowConfiguration _windowConfiguration;
 
         private KinectSensor KinectSensor { get; set; }
         private MultiSourceFrameReader MultiSourceFrameReader { get; set; }
 
-        private AutoResetEvent faceReadyEvent = new AutoResetEvent(false);
+        //private AutoResetEvent faceReadyEvent = new AutoResetEvent(false);
         private AutoResetEvent dataAvailableEvent = new AutoResetEvent(false);
         private volatile bool processingData = false;
         private List<CameraSpacePoint> headPositionsJoint = new List<CameraSpacePoint>();
@@ -34,8 +37,7 @@ namespace Assets.Scripts.ImageProcessing
 
         private Vector3 HeadPosition = Vector3.zero;
 
-        //private KalmanFilter3D filter = new KalmanFilter3D(1, 1, 7, 7, 0, 0);
-        //private double KeepStillThreshold = 1.0; // cm, eucledian distance
+        private KalmanFilter3D filter = new KalmanFilter3D(1, 1, 7, 7, 0, 0);
 
         private Thread KinectDataProcessingThread;
 
@@ -82,10 +84,21 @@ namespace Assets.Scripts.ImageProcessing
 
                 if (headPosition.HasValue)
                 {
-                    HeadPosition = headPosition.Value;
+                    if(isKalmanFilterOn)
+                        HeadPosition = Track(headPosition.Value);
+                    else HeadPosition = headPosition.Value;
                 }
                 processingData = false;
             }
+        }
+
+        private Vector3 Track(Vector3 headPosition)
+        {
+            if (Vector3.Distance(HeadPosition, headPosition) < KeepStillThreshold)
+            {
+                return HeadPosition;
+            }
+            return filter.Output(headPosition);
         }
 
         private void OnMultiFrameArrived(object sender, MultiSourceFrameArrivedEventArgs e)

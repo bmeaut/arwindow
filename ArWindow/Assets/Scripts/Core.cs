@@ -10,6 +10,9 @@ namespace ARWindow.Core
         [SerializeField, InterfaceType(typeof(IFaceDataProvider))] private MonoBehaviour faceDataProvider;
         [SerializeField] private Camera renderCamera;
         [SerializeField] private Transform windowCenter;
+        [SerializeField] private float playerCameraYPos = 5;
+        [SerializeField] private float playerCameraXPos = 0;
+        [SerializeField] private float windowAngleInDegree = 10.5f;
 
         [Inject] private readonly WindowConfiguration windowConfiguration;
 
@@ -22,6 +25,9 @@ namespace ARWindow.Core
 
         private void Update()
         {
+            windowConfiguration.playerCameraXPos = playerCameraXPos;
+            windowConfiguration.playerCameraYPos = playerCameraYPos;
+            windowConfiguration.windowAngleInDegree = windowAngleInDegree;
             var eyePosition = FaceDataProvider.GetFacePosition();
 
             //At the beginning for some milliseconds, unity won't get the kinect capture and gives errors,
