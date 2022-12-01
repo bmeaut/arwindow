@@ -10,9 +10,9 @@ namespace ARWindow.Core
         [SerializeField, InterfaceType(typeof(IFaceDataProvider))] private MonoBehaviour faceDataProvider;
         [SerializeField] private Camera renderCamera;
         [SerializeField] private Transform windowCenter;
-        [SerializeField] private float playerCameraYPos = 5;
-        [SerializeField] private float playerCameraXPos = 0;
-        [SerializeField] private float windowAngleInDegree = 10.5f;
+        //[SerializeField] private float playerCameraYPos = 5;
+        //[SerializeField] private float playerCameraXPos = 0;
+        //[SerializeField] private float windowAngleInDegree = 10.5f;
 
         [Inject] private readonly WindowConfiguration windowConfiguration;
 
@@ -25,10 +25,11 @@ namespace ARWindow.Core
 
         private void Update()
         {
-            windowConfiguration.playerCameraXPos = playerCameraXPos;
-            windowConfiguration.playerCameraYPos = playerCameraYPos;
-            windowConfiguration.windowAngleInDegree = windowAngleInDegree;
+            //windowConfiguration.playerCameraXPos = playerCameraXPos;
+            //windowConfiguration.playerCameraYPos = playerCameraYPos;
+            //windowConfiguration.windowAngleInDegree = windowAngleInDegree;
             var eyePosition = FaceDataProvider.GetFacePosition();
+            //Debug.Log(eyePosition.x + " " + eyePosition.y + " " + eyePosition.z);
 
             //At the beginning for some milliseconds, unity won't get the kinect capture and gives errors,
             //so we check, that when eyeposition is zero vector (kinect not initalized).
@@ -67,16 +68,54 @@ namespace ARWindow.Core
             float bottom = Vector3.Dot(vu, va) * nearPlane / d;
             float top = Vector3.Dot(vu, vc) * nearPlane / d;
 
+            ///*
+            Matrix4x4 M = CreateMMatrix(vr, vu, vn);
+            Matrix4x4 P = Matrix4x4.Frustum(left, right, bottom, top, nearPlane, farPlane);
+            Matrix4x4 T = Matrix4x4.Translate(-eyePosition);
+            Matrix4x4 R = Matrix4x4.Rotate(Quaternion.Inverse(transform.rotation) * windowCenter.transform.rotation);
+
+            Debug.Log("M * R * T = " + M * R * T);
+            Debug.Log("M * T = " + M * T);
+
+            renderCamera.worldToCameraMatrix = M * R * T;
+            renderCamera.projectionMatrix = P;
+            //*/
+
+            /*
             // TODO: test, masik projektben ezt hasznaltuk de ez most nincs: Matrix4x4.CreatePerspectiveOffCenter(left, right, bottom, top, nearPlane, farPlane)
-            var P = PerspectiveOffCenter(left, right, bottom, top, nearPlane, farPlane);
+            //var P = PerspectiveOffCenter(left, right, bottom, top, nearPlane, farPlane);
+            var P = Matrix4x4.Frustum(left, right, bottom, top, nearPlane, farPlane);
             var viewMatrix = Matrix4x4.LookAt(eyePosition, eyePosition - vn, vu); // mintha a user merőlegesen nézne a screenre
 
             renderCamera.transform.position = windowCenter.position + eyePosition;
             renderCamera.transform.LookAt(windowCenter);
             //renderCamera.worldToCameraMatrix = viewMatrix; // TODO: eyyel valamiert nem mukodott
             renderCamera.projectionMatrix = P;//eredeti: P*M*T
+            */
         }
 
+        Matrix4x4 CreateMMatrix(Vector3 DirRight, Vector3 DirUp, Vector3 DirNormal)
+        {
+            Matrix4x4 m = Matrix4x4.zero;
+            m[0, 0] = DirRight.x;
+            m[0, 1] = DirRight.y;
+            m[0, 2] = DirRight.z;
+
+            m[1, 0] = DirUp.x;
+            m[1, 1] = DirUp.y;
+            m[1, 2] = DirUp.z;
+
+            m[2, 0] = DirNormal.x;
+            m[2, 1] = DirNormal.y;
+            m[2, 2] = DirNormal.z;
+
+            m[3, 3] = 1.0f;
+            return m;
+        }
+
+        // 
+        // https://medium.com/try-creative-tech/off-axis-projection-in-unity-1572d826541e
+        // http://160592857366.free.fr/joe/ebooks/ShareData/Generalized%20Perspective%20Projection.pdf
         //left-handed, not right-handed as wpf but unity uses left so i guess its good :)
         /// <summary>
         /// Set an off-center projection, where perspective's vanishing

@@ -28,6 +28,8 @@ namespace ARWindow.Configuration.WindowConfigurationManagement
 
         public Vector3 PlayerCameraPointToWindowCenteredPoint(Vector3 point)
         {
+            point = TransformKinectCoordinatesToStraightKinectCoordinates(point);
+
             var angleInRadian = playerCameraAngleInDegree * Math.PI / 180.0;
             var a = point.y * Math.Cos(angleInRadian);
             var b = point.z * Math.Sin(angleInRadian);
@@ -45,8 +47,6 @@ namespace ARWindow.Configuration.WindowConfigurationManagement
 
         public Vector3 TargetCameraPointToWindowCenteredPoint(Vector3 point)
         {
-            point = TransformKinectCoordinatesToStraightKinectCoordinates(point);
-
             var angleInRadian = targetCameraAngleInDegree * Math.PI / 180.0;
             var a = point.y * Math.Cos(angleInRadian);
             var b = point.z * Math.Sin(angleInRadian);
@@ -83,7 +83,7 @@ namespace ARWindow.Configuration.WindowConfigurationManagement
 
             playerCameraAngleInDegree = config.Value<float>("playerCameraAngleInDegree");
             playerCameraXPos = config.Value<float>("playerCameraXPos");
-            playerCameraYPos = config.Value<float>("playerCameraYPos");
+            //playerCameraYPos = config.Value<float>("playerCameraYPos");
 
             windowAngleInDegree = config.Value<float>("windowAngleInDegree");
             kinectDistanceWindowTop = config.Value<float>("kinectDistanceWindowTop");
@@ -92,7 +92,7 @@ namespace ARWindow.Configuration.WindowConfigurationManagement
             Height = config.Value<float>("Height");
 
             // This should 14 + 40 / 2 = 34
-            //playerCameraYPos = kinectDistanceWindowTop + Height / 2.0f;
+            playerCameraYPos = kinectDistanceWindowTop + Height / 2.0f;
         }
     }
 }
