@@ -1,18 +1,16 @@
-﻿using System.Drawing;
-using ARWindow.ImageCapture;
+﻿using ARWindow.ImageCapture;
 using ARWindow.PlayerManagement;
 using Assets.Scripts.PlayerManagement;
-using Emgu.CV;
 using Emgu.CV.Face;
 using Emgu.CV.Structure;
 using Emgu.CV.Util;
+using System.Drawing;
 using UnityEngine;
 
 namespace Assets.Scripts.ImageProcessing
 {
     public class OpenCVFaceLandmarkDetection : MonoBehaviour, IFaceLandmarkProvider
     {
-
         [SerializeField, InterfaceType(typeof(IFaceDataProvider))] private MonoBehaviour faceDataProvider;
         [SerializeField, InterfaceType(typeof(IImageCapture))] private MonoBehaviour _imageCapture;
         private IFaceDataProvider FaceDataProvider => faceDataProvider as IFaceDataProvider;

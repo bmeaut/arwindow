@@ -16,8 +16,6 @@ namespace Assets.Scripts.ObjectMovement
         [Inject] private readonly WindowConfiguration windowConfiguration;
         private IFaceLandmarkProvider FaceLandmarkProvider => faceLandmarkProvider as IFaceLandmarkProvider;
 
-        private Vector3 destination;
-        private Vector3 startPos;
         private VectorOfPoint3D32F face3D;
         private Matrix<double> cameraMat, distCoeffs;
 
@@ -38,8 +36,6 @@ namespace Assets.Scripts.ObjectMovement
                 [2, 1] = 0,
                 [2, 2] = 1
             };
-            //cameraMat = Mat.Zeros(3, 3, Emgu.CV.CvEnum.DepthType.Cv64F, 1);
-            //distCoeffs = Mat.Zeros(4, 1, Emgu.CV.CvEnum.DepthType.Cv64F, 1);
             distCoeffs = new Matrix<double>(4, 1)
             {
                 [0, 0] = 0,
@@ -47,7 +43,6 @@ namespace Assets.Scripts.ObjectMovement
                 [2, 0] = 0,
                 [3, 0] = 0
             };
-            startPos = transform.position;
             face3D = new VectorOfPoint3D32F(new MCvPoint3D32f[] {
                 new MCvPoint3D32f(0, 0, 0),             // Nose
                 new MCvPoint3D32f(0, -330, -65),        // Chin
