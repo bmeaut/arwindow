@@ -1,14 +1,14 @@
+using ARWindow.Configuration.WindowConfigurationManagement;
+using ARWindow.ImageCapture;
+using ARWindow.PlayerManagement;
+using Emgu.CV;
+using Emgu.CV.Structure;
+using Injecter;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
-using UnityEngine;
 using UltraFaceDotNet;
-using Emgu.CV;
-using Emgu.CV.Structure;
-using ARWindow.PlayerManagement;
-using ARWindow.ImageCapture;
-using ARWindow.Configuration.WindowConfigurationManagement;
-using Injecter;
+using UnityEngine;
 
 namespace ARWindow.ImageProcessing
 {

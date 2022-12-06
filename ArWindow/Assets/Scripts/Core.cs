@@ -1,7 +1,7 @@
-﻿using UnityEngine;
+﻿using ARWindow.Configuration.WindowConfigurationManagement;
 using ARWindow.PlayerManagement;
-using ARWindow.Configuration.WindowConfigurationManagement;
 using Injecter;
+using UnityEngine;
 
 namespace ARWindow.Core
 {
@@ -27,7 +27,7 @@ namespace ARWindow.Core
 
             // At the beginning for some milliseconds, unity won't get the kinect capture and gives errors,
             // so we check, that when eyeposition is zero vector, we don't do anything (kinect not initalized).
-            if(eyePosition == Vector3.zero)
+            if (eyePosition == Vector3.zero)
                 return;
 
             float windowLeft = -windowConfiguration.Width / 2.0f;
@@ -64,7 +64,7 @@ namespace ARWindow.Core
 
             if (newAlgo)
             {
-                Matrix4x4 P = Matrix4x4.Frustum(left, right, bottom, top, nearPlane, farPlane);                
+                Matrix4x4 P = Matrix4x4.Frustum(left, right, bottom, top, nearPlane, farPlane);
                 Matrix4x4 T = Matrix4x4.Translate(-eyePosition);
                 //Matrix4x4 M = CreateMMatrix(vr, vu, vn);
                 //Matrix4x4 R = Matrix4x4.Rotate(Quaternion.Inverse(transform.rotation) * windowCenter.transform.rotation);

@@ -1,11 +1,11 @@
-﻿using UnityEngine;
-using Emgu.CV;
-using Emgu.CV.Structure;
-using System.Drawing;
-using ARWindow.Configuration.WindowConfigurationManagement;
+﻿using ARWindow.Configuration.WindowConfigurationManagement;
 using ARWindow.ImageCapture;
 using ARWindow.PlayerManagement;
+using Emgu.CV;
+using Emgu.CV.Structure;
 using Injecter;
+using System.Drawing;
+using UnityEngine;
 
 namespace ARWindow.ImageProcessing
 {
@@ -28,7 +28,7 @@ namespace ARWindow.ImageProcessing
         private Rectangle detectedFace;
         #endregion
 
-        public Vector3 GetFacePosition() => faceRectCenter != default ? FacePos : new Vector3(0,0,5);
+        public Vector3 GetFacePosition() => faceRectCenter != default ? FacePos : new Vector3(0, 0, 5);
         public Rectangle GetFaceRect() => detectedFace;
 
 

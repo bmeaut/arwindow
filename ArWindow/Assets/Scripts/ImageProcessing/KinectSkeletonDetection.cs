@@ -1,18 +1,12 @@
 ﻿using ARWindow.Configuration.WindowConfigurationManagement;
-using ARWindow.ImageProcessing;
 using ARWindow.PlayerManagement;
 using Assets.Scripts.Filters;
-using Codice.Utils;
 using Injecter;
-using Microsoft.Kinect.Face;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
-using System.Runtime.InteropServices;
-using System.Text;
 using System.Threading;
-using System.Threading.Tasks;
 using UnityEngine;
 using Windows.Kinect;
 
@@ -83,7 +77,7 @@ namespace Assets.Scripts.ImageProcessing
 
                 if (headPosition.HasValue)
                 {
-                    if(isKalmanFilterOn)
+                    if (isKalmanFilterOn)
                         HeadPosition = Track(headPosition.Value);
                     else HeadPosition = headPosition.Value;
                 }

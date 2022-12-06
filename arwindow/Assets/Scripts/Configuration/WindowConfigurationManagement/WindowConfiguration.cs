@@ -1,7 +1,7 @@
-﻿using System;
-using UnityEngine;
+﻿using ARWindow.Serialization;
 using Newtonsoft.Json;
-using ARWindow.Serialization;
+using System;
+using UnityEngine;
 
 namespace ARWindow.Configuration.WindowConfigurationManagement
 {

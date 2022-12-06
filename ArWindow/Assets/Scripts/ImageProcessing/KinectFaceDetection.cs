@@ -1,14 +1,14 @@
+using ARWindow.Configuration.WindowConfigurationManagement;
 using ARWindow.PlayerManagement;
+using Assets.Scripts.Filters;
+using Injecter;
+using Microsoft.Kinect.Face;
+using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Linq;
 using UnityEngine;
 using Windows.Kinect;
-using System;
-using Microsoft.Kinect.Face;
-using System.Linq;
-using ARWindow.Configuration.WindowConfigurationManagement;
-using Injecter;
-using Assets.Scripts.Filters;
 
 namespace ARWindow.ImageProcessing
 {

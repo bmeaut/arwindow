@@ -1,4 +1,3 @@
-using UnityEngine;
 using Emgu.CV;
 using Emgu.CV.Structure;
 
