@@ -62,20 +62,18 @@ namespace ARWindow.Core
             float bottom = Vector3.Dot(vu, va) * nearPlane / d;
             float top = Vector3.Dot(vu, vc) * nearPlane / d;
 
-            ///*
             if (newAlgo)
             {
-                Matrix4x4 M = CreateMMatrix(vr, vu, vn);
-                Matrix4x4 P = Matrix4x4.Frustum(left, right, bottom, top, nearPlane, farPlane);
+                Matrix4x4 P = Matrix4x4.Frustum(left, right, bottom, top, nearPlane, farPlane);                
                 Matrix4x4 T = Matrix4x4.Translate(-eyePosition);
+                //Matrix4x4 M = CreateMMatrix(vr, vu, vn);
                 //Matrix4x4 R = Matrix4x4.Rotate(Quaternion.Inverse(transform.rotation) * windowCenter.transform.rotation);
 
-                //Debug.Log("M * R * T = " + M * R * T);
-                //Debug.Log("M * T = " + M * T);
+                // Originally: M * R * T. But in our system, we don't need the rotation matrix and the M basis change matrix is an identity matrix.
+                // WorldToCameraMatrix corrects shadow calculations as well, so we had to change the directional light to point to the subject
+                renderCamera.worldToCameraMatrix = T;
 
-                renderCamera.worldToCameraMatrix = M * T;
                 renderCamera.projectionMatrix = P;
-                //*/
             }
             else
             {
@@ -112,6 +110,7 @@ namespace ARWindow.Core
 
         // https://medium.com/try-creative-tech/off-axis-projection-in-unity-1572d826541e
         // http://160592857366.free.fr/joe/ebooks/ShareData/Generalized%20Perspective%20Projection.pdf
+        // TODO: We don't actually need this, because Matrix4x4.Frustrum function does exactly the same thing
         //left-handed, not right-handed as wpf but unity uses left so i guess its good :)
         /// <summary>
         /// Set an off-center projection, where perspective's vanishing
