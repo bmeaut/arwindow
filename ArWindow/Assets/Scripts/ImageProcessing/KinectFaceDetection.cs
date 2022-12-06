@@ -35,7 +35,7 @@ namespace ARWindow.ImageProcessing
         private List<GameObject> _facePoints = new List<GameObject>();
 
         public Vector3 GetFacePosition() => HeadPosition;
-        public Rectangle GetFaceRect() => GetDriverFaceRect(HeadPosition);
+        public Rectangle GetFaceRect() => GetViewerFaceRect(HeadPosition);
 
         // Start is called before the first frame update
         void Start()
@@ -112,9 +112,8 @@ namespace ARWindow.ImageProcessing
                 HeadPosition = Track(headPosition);
             else HeadPosition = headPosition;
 
-            //ideiglenes, csak tesztelésre
-            //vertex pontok megjelenítése térben
-            //TODO: Delete this, if we don't need it. From testing, this looks very good.
+            // Temporary, only for testing. Draw the face with vertex points in unity.
+            // TODO: Delete this, if we don't need it. From testing, this looks very good.
             /*
             if (_facePoints.Count == 0)
             {
@@ -149,12 +148,12 @@ namespace ARWindow.ImageProcessing
             return new Vector3(cameraSpacePoint.X * 100.0f, cameraSpacePoint.Y * 100.0f, cameraSpacePoint.Z * 100.0f);
         }
 
-        private Rectangle GetDriverFaceRect(Vector3 driverPosition)
+        private Rectangle GetViewerFaceRect(Vector3 viewerPosition)
         {
             var centerx = 960;
             var centery = 540;
 
-            var sub = driverPosition.z - 120;
+            var sub = viewerPosition.z - 120;
             int width = 300;
             int height = 300;
 
@@ -178,8 +177,8 @@ namespace ARWindow.ImageProcessing
                 yOffset = (int)Math.Round(yOffset + sub / 2);
             }
 
-            var xHead = centerx + (int)Math.Round(driverPosition.x * xScale);
-            var yHead = centery - (int)Math.Round(driverPosition.z * yScale);
+            var xHead = centerx + (int)Math.Round(viewerPosition.x * xScale);
+            var yHead = centery - (int)Math.Round(viewerPosition.z * yScale);
 
             int xRect = xHead - xOffset;
             int yRect = yHead - yOffset;
@@ -197,7 +196,7 @@ namespace ARWindow.ImageProcessing
 
             if (width < 100 || height < 100)
             {
-                return new Rectangle(xRect, yRect, width, height); // TODO: ez eredetileg null volt, nem tom miert
+                return new Rectangle(xRect, yRect, width, height); // TODO: it was originally null, we don't know why
             }
 
             return new Rectangle(xRect, yRect, width, height);

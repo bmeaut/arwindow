@@ -28,7 +28,6 @@ namespace Assets.Scripts.ImageProcessing
         private KinectSensor KinectSensor { get; set; }
         private MultiSourceFrameReader MultiSourceFrameReader { get; set; }
 
-        //private AutoResetEvent faceReadyEvent = new AutoResetEvent(false);
         private AutoResetEvent dataAvailableEvent = new AutoResetEvent(false);
         private volatile bool processingData = false;
         private List<CameraSpacePoint> headPositionsJoint = new List<CameraSpacePoint>();
@@ -42,7 +41,7 @@ namespace Assets.Scripts.ImageProcessing
         private Thread KinectDataProcessingThread;
 
         public Vector3 GetFacePosition() => HeadPosition;
-        public Rectangle GetFaceRect() => GetDriverFaceRect(HeadPosition);
+        public Rectangle GetFaceRect() => GetViewerFaceRect(HeadPosition);
 
         // Start is called before the first frame update
         void Start()
@@ -109,8 +108,6 @@ namespace Assets.Scripts.ImageProcessing
             bool dataAvailable = false;
             MultiSourceFrame msf = e.FrameReference.AcquireFrame();
             if (msf != null)
-                //using (ColorFrame colorFrame = msf.ColorFrameReference.AcquireFrame())
-                //using (DepthFrame depthFrame = msf.DepthFrameReference.AcquireFrame())
                 using (BodyFrame bodyFrame = msf.BodyFrameReference.AcquireFrame())
                 {
                     headPositionsJoint.Clear();
@@ -128,19 +125,19 @@ namespace Assets.Scripts.ImageProcessing
                 }
         }
 
-        //This functions also multiply the coords with 100, so we measure the things centimeters
-        //and not in meters (as the kinect SDK does)
+        // This function also multiply the coords with 100, so we measure the things centimeters
+        // and not in meters (as the kinect SDK does)
         private Vector3 ConvertCameraSpacePointToVector3D(CameraSpacePoint cameraSpacePoint)
         {
             return new Vector3(cameraSpacePoint.X * 100.0f, cameraSpacePoint.Y * 100.0f, cameraSpacePoint.Z * 100.0f);
         }
 
-        private Rectangle GetDriverFaceRect(Vector3 driverPosition)
+        private Rectangle GetViewerFaceRect(Vector3 viewerPosition)
         {
             var centerx = 960;
             var centery = 540;
 
-            var sub = driverPosition.z - 120;
+            var sub = viewerPosition.z - 120;
             int width = 300;
             int height = 300;
 
@@ -164,8 +161,8 @@ namespace Assets.Scripts.ImageProcessing
                 yOffset = (int)Math.Round(yOffset + sub / 2);
             }
 
-            var xHead = centerx + (int)Math.Round(driverPosition.x * xScale);
-            var yHead = centery - (int)Math.Round(driverPosition.z * yScale);
+            var xHead = centerx + (int)Math.Round(viewerPosition.x * xScale);
+            var yHead = centery - (int)Math.Round(viewerPosition.z * yScale);
 
             int xRect = xHead - xOffset;
             int yRect = yHead - yOffset;
@@ -183,7 +180,7 @@ namespace Assets.Scripts.ImageProcessing
 
             if (width < 100 || height < 100)
             {
-                return new Rectangle(xRect, yRect, width, height); // TODO: ez eredetileg null volt, nem tom miert
+                return new Rectangle(xRect, yRect, width, height); // TODO: it was originally null, we don't know why
             }
 
             return new Rectangle(xRect, yRect, width, height);

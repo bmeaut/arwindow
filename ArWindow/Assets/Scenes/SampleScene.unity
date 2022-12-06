@@ -158,6 +158,7 @@ MonoBehaviour:
   faceDataProvider: {fileID: 153785185}
   renderCamera: {fileID: 729493371}
   windowCenter: {fileID: 369393699}
+  newAlgo: 1
 --- !u!4 &153785181
 Transform:
   m_ObjectHideFlags: 0
