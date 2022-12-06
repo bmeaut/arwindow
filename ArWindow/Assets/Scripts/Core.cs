@@ -10,15 +10,40 @@ namespace ARWindow.Core
         [SerializeField, InterfaceType(typeof(IFaceDataProvider))] private MonoBehaviour faceDataProvider;
         [SerializeField] private Camera renderCamera;
         [SerializeField] private Transform windowCenter;
-        [SerializeField] private bool newAlgo = true;
+        [SerializeField] private bool newAlgorithm = true;
 
         [Inject] private readonly WindowConfiguration windowConfiguration;
+
+        // Screen corners, origo is window center
+        private Vector3 pa = Vector3.zero;
+        private Vector3 pb = Vector3.zero;
+        private Vector3 pc = Vector3.zero;
+
+        // Orthonormal basis for the screen
+        private Vector3 vr = Vector3.zero;
+        private Vector3 vu = Vector3.zero;
+        private Vector3 vn = Vector3.zero;
 
         private IFaceDataProvider FaceDataProvider => faceDataProvider as IFaceDataProvider;
 
         private void Start()
         {
             renderCamera.aspect = windowConfiguration.Width / windowConfiguration.Height;
+
+            float windowLeft = -windowConfiguration.Width / 2.0f;
+            float windowRight = windowConfiguration.Width / 2.0f;
+            float windowTop = windowConfiguration.Height / 2.0f;
+            float windowBottom = -windowConfiguration.Height / 2.0f;
+
+            // Screen corners, origo is window center
+            pa = new Vector3(windowLeft, windowBottom, 0.0f);
+            pb = new Vector3(windowRight, windowBottom, 0.0f);
+            pc = new Vector3(windowLeft, windowTop, 0.0f);
+
+            //orthonormal basis for the screen
+            vr = Vector3.Normalize(pb - pa); // right
+            vu = Vector3.Normalize(pc - pa); // up
+            vn = Vector3.Normalize(Vector3.Cross(vr, vu)); // screen normal
         }
 
         private void Update()
@@ -30,26 +55,11 @@ namespace ARWindow.Core
             if (eyePosition == Vector3.zero)
                 return;
 
-            float windowLeft = -windowConfiguration.Width / 2.0f;
-            float windowRight = windowConfiguration.Width / 2.0f;
-            float windowTop = windowConfiguration.Height / 2.0f;
-            float windowBottom = -windowConfiguration.Height / 2.0f;
-
             // levetitett frustrum merete, nearPlane legyen a leheto legnagyobb, farPlane a leheto legkisebb!
             float nearPlane = 0.3f;
             float farPlane = 1000.0f;
 
-            //screen corners, origo is window center
-            Vector3 pa = new Vector3(windowLeft, windowBottom, 0.0f);
-            Vector3 pb = new Vector3(windowRight, windowBottom, 0.0f);
-            Vector3 pc = new Vector3(windowLeft, windowTop, 0.0f);
-
-            //orthonormal basis for the screen
-            Vector3 vr = Vector3.Normalize(pb - pa); //right
-            Vector3 vu = Vector3.Normalize(pc - pa); //up
-            Vector3 vn = Vector3.Normalize(Vector3.Cross(vr, vu)); //screen normal
-
-            //screen corner vectors (from eye to corners)
+            // Screen corner vectors (from eye to corners)
             Vector3 va = pa - eyePosition;
             Vector3 vb = pb - eyePosition;
             Vector3 vc = pc - eyePosition;
@@ -62,7 +72,7 @@ namespace ARWindow.Core
             float bottom = Vector3.Dot(vu, va) * nearPlane / d;
             float top = Vector3.Dot(vu, vc) * nearPlane / d;
 
-            if (newAlgo)
+            if (newAlgorithm)
             {
                 Matrix4x4 P = Matrix4x4.Frustum(left, right, bottom, top, nearPlane, farPlane);
                 Matrix4x4 T = Matrix4x4.Translate(-eyePosition);
@@ -78,9 +88,9 @@ namespace ARWindow.Core
             else
             {
                 // TODO: test, masik projektben ezt hasznaltuk de ez most nincs: Matrix4x4.CreatePerspectiveOffCenter(left, right, bottom, top, nearPlane, farPlane)
-                //var P = PerspectiveOffCenter(left, right, bottom, top, nearPlane, farPlane);
-                var P = Matrix4x4.Frustum(left, right, bottom, top, nearPlane, farPlane);
-                var viewMatrix = Matrix4x4.LookAt(eyePosition, eyePosition - vn, vu); // mintha a user merőlegesen nézne a screenre
+                var P = PerspectiveOffCenter(left, right, bottom, top, nearPlane, farPlane);
+                //var P = Matrix4x4.Frustum(left, right, bottom, top, nearPlane, farPlane);
+                //var viewMatrix = Matrix4x4.LookAt(eyePosition, eyePosition - vn, vu); // mintha a user merőlegesen nézne a screenre
 
                 renderCamera.transform.position = windowCenter.position + eyePosition;
                 renderCamera.transform.LookAt(windowCenter);

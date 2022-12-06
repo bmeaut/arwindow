@@ -16,6 +16,7 @@ namespace Assets.Scripts.ImageProcessing
     {
         [SerializeField] private bool isKalmanFilterOn = false;
         [SerializeField] private double KeepStillThreshold = 1.0; // cm, eucledian distance
+        [SerializeField] private bool trackClosestBody = true;
 
         [Inject] private readonly WindowConfiguration _windowConfiguration;
 
@@ -36,6 +37,9 @@ namespace Assets.Scripts.ImageProcessing
 
         public Vector3 GetFacePosition() => HeadPosition;
         public Rectangle GetFaceRect() => GetViewerFaceRect(HeadPosition);
+
+        private Dictionary<ulong, CameraSpacePoint> headPositionJointPerBody = new Dictionary<ulong, CameraSpacePoint>();
+        private ulong currentBodyID = 0;
 
         // Start is called before the first frame update
         void Start()
@@ -72,8 +76,31 @@ namespace Assets.Scripts.ImageProcessing
                 Vector3? headPosition = null;
 
                 if (headPositionsJoint.Count != 0)
-                    headPosition = _windowConfiguration.PlayerCameraPointToWindowCenteredPoint(
-                        ConvertCameraSpacePointToVector3D(headPositionsJoint.First()));
+                {
+                    if(trackClosestBody)
+                    {
+                        // We don't need the square root, because we don't need the actual distance from the camera,
+                        // only the nearest point.
+                        var closest = headPositionsJoint.OrderBy(p => p.X * p.X + p.Y * p.Y + p.Z * p.Z).First();
+                        headPosition = _windowConfiguration.PlayerCameraPointToWindowCenteredPoint(
+                            ConvertCameraSpacePointToVector3D(closest));
+                    }
+                    else
+                    {
+                        if(headPositionJointPerBody.TryGetValue(currentBodyID, out var value))
+                        {
+                            headPosition = _windowConfiguration.PlayerCameraPointToWindowCenteredPoint(
+                                ConvertCameraSpacePointToVector3D(value));
+                        }
+                        else
+                        {
+                            var newBody = headPositionJointPerBody.First();
+                            currentBodyID = newBody.Key;
+                            headPosition = _windowConfiguration.PlayerCameraPointToWindowCenteredPoint(
+                                ConvertCameraSpacePointToVector3D(newBody.Value));
+                        }
+                    }
+                }
 
                 if (headPosition.HasValue)
                 {
@@ -104,12 +131,17 @@ namespace Assets.Scripts.ImageProcessing
             if (msf != null)
                 using (BodyFrame bodyFrame = msf.BodyFrameReference.AcquireFrame())
                 {
+                    headPositionJointPerBody.Clear();
                     headPositionsJoint.Clear();
                     bodyFrame.GetAndRefreshBodyData(bodies);
                     foreach (var body in bodies)
                     {
                         if (body.IsTracked)
                         {
+                            if (currentBodyID == 0)
+                                currentBodyID = body.TrackingId;
+
+                            headPositionJointPerBody.Add(body.TrackingId, body.Joints[JointType.Head].Position);
                             headPositionsJoint.Add(body.Joints[JointType.Head].Position);
                         }
                     }
