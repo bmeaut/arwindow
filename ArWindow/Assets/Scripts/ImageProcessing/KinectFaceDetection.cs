@@ -1,16 +1,24 @@
+using ARWindow.Configuration.WindowConfigurationManagement;
 using ARWindow.PlayerManagement;
+using Assets.Scripts.Filters;
+using Injecter;
+using Microsoft.Kinect.Face;
+using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Linq;
 using UnityEngine;
 using Windows.Kinect;
-using System;
-using Microsoft.Kinect.Face;
-using System.Linq;
 
 namespace ARWindow.ImageProcessing
 {
     public class KinectFaceDetection : MonoBehaviour, IFaceDataProvider
     {
+        [SerializeField] private bool isKalmanFilterOn = false;
+        [SerializeField] private double KeepStillThreshold = 1.0; // cm, eucledian distance
+
+        [Inject] private readonly WindowConfiguration _windowConfiguration;
+
         private KinectSensor KinectSensor { get; set; }
         private BodyFrameSource _bodySource;
         private BodyFrameReader _bodyReader;
@@ -19,13 +27,15 @@ namespace ARWindow.ImageProcessing
         private FaceAlignment _faceAlignment;
         private FaceModel _faceModel;
 
-        private Vector3 HeadPosition;
+        private Vector3 HeadPosition = Vector3.zero;
+
+        private KalmanFilter3D filter = new KalmanFilter3D(1, 1, 7, 7, 0, 0);
 
         public GameObject _vertexPrefab;
         private List<GameObject> _facePoints = new List<GameObject>();
 
         public Vector3 GetFacePosition() => HeadPosition;
-        public Rectangle GetFaceRect() => GetDriverFaceRect(HeadPosition);
+        public Rectangle GetFaceRect() => GetViewerFaceRect(HeadPosition);
 
         // Start is called before the first frame update
         void Start()
@@ -94,8 +104,17 @@ namespace ARWindow.ImageProcessing
             var vertices = _faceModel.CalculateVerticesForAlignment(_faceAlignment);
             if (vertices.Count == 0) return;
 
-            //ideiglenes, csak tesztelésre
-            //vertex pontok megjelenítése térben
+            var headPosition = _windowConfiguration.PlayerCameraPointToWindowCenteredPoint(
+                ConvertCameraSpacePointToVector3D(vertices[(int)HighDetailFacePoints.NoseTop]));
+
+            // Apply kalman-filter if distance is smaller then threshold
+            if (isKalmanFilterOn)
+                HeadPosition = Track(headPosition);
+            else HeadPosition = headPosition;
+
+            // Temporary, only for testing. Draw the face with vertex points in unity.
+            // TODO: Delete this, if we don't need it. From testing, this looks very good.
+            /*
             if (_facePoints.Count == 0)
             {
                 var parent = new GameObject();
@@ -110,21 +129,31 @@ namespace ARWindow.ImageProcessing
                 CameraSpacePoint vertex = vertices[i];
                 _facePoints[i].transform.position = new Vector3(vertex.X, vertex.Y, vertex.Z);
             }
-
-            HeadPosition = ConvertCameraSpacePointToVector3D(vertices[(int)HighDetailFacePoints.NoseTop]);
+            */
         }
 
+        private Vector3 Track(Vector3 headPosition)
+        {
+            if (Vector3.Distance(HeadPosition, headPosition) < KeepStillThreshold)
+            {
+                return HeadPosition;
+            }
+            return filter.Output(headPosition);
+        }
+
+        //This functions also multiply the coords with 100, so we measure the things centimeters
+        //and not in meters (as the kinect SDK does)
         private Vector3 ConvertCameraSpacePointToVector3D(CameraSpacePoint cameraSpacePoint)
         {
             return new Vector3(cameraSpacePoint.X * 100.0f, cameraSpacePoint.Y * 100.0f, cameraSpacePoint.Z * 100.0f);
         }
 
-        private Rectangle GetDriverFaceRect(Vector3 driverPosition)
+        private Rectangle GetViewerFaceRect(Vector3 viewerPosition)
         {
             var centerx = 960;
             var centery = 540;
 
-            var sub = driverPosition.z - 120;
+            var sub = viewerPosition.z - 120;
             int width = 300;
             int height = 300;
 
@@ -148,8 +177,8 @@ namespace ARWindow.ImageProcessing
                 yOffset = (int)Math.Round(yOffset + sub / 2);
             }
 
-            var xHead = centerx + (int)Math.Round(driverPosition.x * xScale);
-            var yHead = centery - (int)Math.Round(driverPosition.z * yScale);
+            var xHead = centerx + (int)Math.Round(viewerPosition.x * xScale);
+            var yHead = centery - (int)Math.Round(viewerPosition.z * yScale);
 
             int xRect = xHead - xOffset;
             int yRect = yHead - yOffset;
@@ -167,7 +196,7 @@ namespace ARWindow.ImageProcessing
 
             if (width < 100 || height < 100)
             {
-                return new Rectangle(xRect, yRect, width, height); // TODO: ez eredetileg null volt, nem tom miert
+                return new Rectangle(xRect, yRect, width, height); // TODO: it was originally null, we don't know why
             }
 
             return new Rectangle(xRect, yRect, width, height);

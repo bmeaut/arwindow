@@ -25,5 +25,5 @@ namespace ARWindow.Serialization
             var jsonString = File.ReadAllText(filePath);
             return JObject.Parse(jsonString);
         }
-    } 
+    }
 }

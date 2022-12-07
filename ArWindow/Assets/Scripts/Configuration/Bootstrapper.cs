@@ -1,10 +1,10 @@
-﻿using UnityEngine;
-using Injecter.Unity;
-using System;
-using Microsoft.Extensions.DependencyInjection;
-using ARWindow.ImageProcessing;
-using ARWindow.Configuration.WindowConfigurationManagement;
+﻿using ARWindow.Configuration.WindowConfigurationManagement;
 using ARWindow.Core;
+using ARWindow.ImageProcessing;
+using Injecter.Unity;
+using Microsoft.Extensions.DependencyInjection;
+using System;
+using UnityEngine;
 
 /// <summary>
 /// DI Bootstrapper based on
